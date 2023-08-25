@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a th:href="@{/}">Home </a>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Excerpt</th>
+        <th>Author</th>
+        <th>Published_At</th>
+        <th>Tags</th>
+    </tr>
+    <tr th:each="post : ${posts}">
+        <td th:text="${post.title}"></td>
+        <td th:text="${post.excerpt}"></td>
+        <td th:text="${post.author}"></td>
+        <td>
+        <span th:each="tag, tagStat : ${post.tags}">
+            <span th:text="${tag.name}"></span>
+            <span th:if="${!tagStat.last}">, </span>
+        </span>
+        </td>
+        <td>
+            <form th:action="@{/update-post}" method="POST">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <input class="submit-button" type="submit" value="Update Post">
+            </form>
+            <form th:action="@{/delete-post}" method="POST">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <input class="submit-button" type="submit" value="Delete Post">
+            </form>
+            <form th:action="@{/publish}" method="post">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <input type="submit" value="Publish">
+            </form>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

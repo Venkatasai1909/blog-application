@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogs</title>
+    <style>
+        .filter-container{
+        display : flex;
+
+        }
+        .filter-container form {
+
+            width : 40%;
+            display: flex;
+            margin-top : 42px;
+            margin-left : -4.3rem;
+
+        }
+        .buttons{
+        display : flex;
+        flex-direction : column;
+        margin-left : 2rem;
+        line-gap : 2rem;
+
+        }
+        .buttons div {
+        margin-bottom : 1.5rem;
+        }
+        .buttons input {
+         margin-bottom : 1.5rem;
+        }
+        .box-container{
+
+        width : 80%;
+        margin-left : 1rem;
+        display : flex;
+        flex-wrap : wrap;
+
+        }
+        .post-box{
+        border : 1px solid black;
+        width : 22%;
+        height : 20%;
+        margin-right : 2rem;
+        margin-top: 2rem;
+        margin-left : 1rem;
+        text-align:center;
+        }
+        .next-page{
+            display : flex;
+            flex-direction : column;
+            justify-content: flex-end;
+        }
+</style>
+</head>
+<body>
+<div class="addPost">
+    <a th:href="@{/new-post}">
+        Add Post
+    </a>
+</div>
+
+<div>
+    <a th:href="@{/drafts}">
+        Drafts
+    </a>
+</div>
+
+
+    <form th:action="@{'/page/' + 1}" method="get" id="searchForm">
+        <label for="search">Search:</label>
+        <input type="search" id="search" name="search" placeholder="Enter your search term" />
+        <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
+        <input type="hidden" name="sortField" th:value="${sortField}" />
+        <input type="submit" value="Search">
+    </form>
+
+    <form th:action="@{'/page/' + ${currentPage}}" method="get" id="sortForm">
+        <label for="sortDirection">Sort by Published Date:</label>
+        <select name="sortDirection" id="sortDirection">
+            <option value="asc" th:selected="${sortDirection == 'asc'}">Old to new Posts</option>
+            <option value="desc" th:selected="${sortDirection == 'desc'}">Recommended</option>
+        </select>
+        <input type="hidden" name="sortField" th:value="${sortField}" />
+        <button type="submit">Apply Sorting</button>
+    </form>
+<div class = "filter-container">
+    <h2>Filters</h2>
+    <form th:action="@{'/page/'+${currentPage}}" method="get" id="sortFilterForm">
+        <div class ="filter-section">
+            <h2>Authors</h2>
+            <div th:each="author : ${authors}">
+                <input type="checkbox" th:value="${author}" name="authors">
+                <label th:text="${author}"></label>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h2>Tags</h2>
+            <div th:each="tag : ${tags}">
+                <input type="checkbox" th:value="${tag}" name="tags">
+                <label th:text="${tag}"></label>
+            </div>
+        </div>
+        <div class = "buttons">
+
+            <div >
+                <h2>Published Date : </h2>
+                <input type="datetime-local" th:value="${startDate}" name="startDate">
+                <input type="datetime-local" th:value="${endDate}" name="endDate">
+            </div>
+
+            <label for="sortDirection">Sort by Published Date:</label>
+            <select name="sortDirection" id="sortDirectionFilter">
+                <option value="asc" th:selected="${sortDirection == 'asc'}">Old to new Posts</option>
+                <option value="desc" th:selected="${sortDirection == 'desc'}">Recommended</option>
+            </select>
+            <br>
+            <br>
+            <input type="hidden" name="sortField" th:value="${sortField}" />
+            <input type="reset" value="Reset">
+            <input type="submit" value="Apply Sorting and Filters">
+        </div>
+    </form>
+
+    <div class="box-container">
+        <div th:each="post : ${posts}" class="post-box">
+            <a th:href="@{'/post/' + ${post.id}}" class="post-title" th:text="${post.title}"></a>
+            <p class="post-excerpt" th:text="${post.excerpt}"></p>
+            <p class="post-author" th:text="${post.author}"></p>
+            <p class="post-publishedAt" th:text="${#temporals.format(post.publishedAt, 'yyyy-MM-dd h:mma')}"></p>
+            <p class="post-tags">
+            <span th:each="tag, tagStat : ${post.tags}">
+                <span class="tag" th:text="${tag.name}"></span>
+                <span th:if="${!tagStat.last}">, </span>
+            </span>
+            </p>
+        </div>
+        <div class = "next-page">
+            <a th:if="${currentPage < totalPages}" th:href="@{/page/{pageNumber}(pageNumber=${currentPage + 1})}" id="nextPageLink">Next Page</a>
+            <a th:if="${currentPage > 1}" th:href="@{/page/{pageNumber}(pageNumber=${currentPage - 1})}" id="prevPageLink">Previous Page</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>

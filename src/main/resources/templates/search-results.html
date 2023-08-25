@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blogs</title>
+    <style>
+        #authorFilterForm{
+            display: flex;
+            width: 40%;
+            justify-content: space-around;
+        }
+        table{
+
+        margin-left: 2rem;
+        }
+        .main-container{
+
+            display : flex;
+        }
+        .submit{
+            align-self: center;
+            margin-top: 7rem;
+            margin-left: -20rem;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}">Home </a>
+<h2>Search Results on <span th:text="${search}"></span></h2>
+<form th:action="@{'/search/page/'+1}" method="get" id="searchForm">
+    <label for="search">Search:</label>
+    <input type="search" id="search" name="search" placeholder="Enter your search term">
+    <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
+    <input type="hidden" name="sortField" th:value="${sortField}" />
+    <input type="submit" value="Search">
+</form>
+
+<form th:action="@{'/search/page/' + ${currentPage}}" method="get" id="sortForm">
+    <label for="sortDirection">Sort by:</label>
+    <select name="sortField" id="sortField">
+        <option value="publishedAt" th:selected="${sortField == 'publishedAt'}">Published Date</option>
+    </select>
+    <select name="sortDirection" id="sortDirection">
+        <option value="asc" th:selected="${sortDirection == 'asc'}">Ascending</option>
+        <option value="desc" th:selected="${sortDirection == 'desc'}">Descending</option>
+    </select>
+    <input type="hidden" name="search" th:value="${search}" />
+    <button type="submit">Apply Sorting</button>
+</form>
+<div class="main-container">
+    <form th:action="@{'/search/page/'+${currentPage}}" method="get" id="authorFilterForm">
+        <div>
+            <h2>Authors</h2>
+            <div th:each="author : ${authors}">
+                <input type="checkbox" th:value="${author}" name="authors">
+                <label th:text="${author}"></label>
+            </div>
+        </div>
+        <div>
+            <h2>Tags</h2>
+            <div th:each="tag : ${tags}">
+                <input type="checkbox" th:value="${tag}" name="tags">
+                <label th:text="${tag}"></label>
+            </div>
+        </div>
+        <div>
+            <h2>Published Date : </h2>
+            <input type="datetime-local" th:value="${startDate}" name="startDate">
+            <input type="datetime-local" th:value="${endDate}" name="endDate">
+        </div>
+        <div>
+            <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
+            <input type="hidden" name="search" th:value="${search}">
+            <input type="hidden" name="sortField" th:value="${sortField}" />
+            <input type="submit" value="Apply Filters" class = "submit">
+        </div>
+    </form>
+
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Excerpt</th>
+            <th>Author</th>
+            <th>Published_At</th>
+            <th>Tags</th>
+        </tr>
+        <tr th:each="post : ${posts}">
+            <td><a th:href="@{'/post/' + ${post.id}}" th:text="${post.title}"></a></td>
+            <td th:text="${post.excerpt}"></td>
+            <td th:text="${post.author}"></td>
+            <td th:text="${#temporals.format(post.publishedAt, 'yyyy-MM-dd h:mma')}"></td>
+            <td>
+                <span th:each="tag, tagStat : ${post.tags}">
+                    <span th:text="${tag.name}"></span>
+                    <span th:if="${!tagStat.last}">, </span>
+                </span>
+            </td>
+        </tr>
+    </table>
+    </div>
+<div>
+    <a th:if="${currentPage < totalPages}"
+       th:href="@{/search/page/{pageNo}(pageNo=${currentPage + 1}, search=${search})}">
+        Next Page
+    </a>
+</div>
+
+<div>
+    <a th:if="${currentPage > 1}"
+       th:href="@{/search/page/{pageNo}(pageNo=${currentPage - 1}, search=${search})}">
+        Previous Page
+    </a>
+</div>
+
+
+
+</body>
+</html>

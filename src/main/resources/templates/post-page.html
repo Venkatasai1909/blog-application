@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post</title>
+    <style>
+        .form-container form{
+            display : flex;
+            flex-direction : column;
+            justify-container : space-around;
+            height : 20vh;
+            width : 20vw;
+            padding-top : 2rem;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}">Home </a>
+<div class="container">
+    <h2>Title</h2>
+    <h3 th:text="${post.title}"></h3>
+    <hr>
+    <h2>Content</h2>
+    <p th:text="${post.content}"></p>
+    <hr>
+    <h2>Author</h2>
+    <p th:text="${post.author}"></p>
+    <hr>
+    <h2>Published Date</h2>
+    <p th:text="${post.publishedAt}"></p>
+
+    <hr>
+    <h2>Tags</h2>
+    <span th:each="tag, tagStat : ${post.tags}">
+        <span th:text="${tag.name}"></span>
+        <span th:if="${!tagStat.last}">, </span>
+    </span>
+
+    <hr>
+    <form th:action="@{/update-post}" method="POST">
+        <input type="hidden" name="postId" th:value="${post.id}">
+        <input class="submit-button" type="submit" value="Update Post">
+    </form>
+    <form th:action="@{/delete-post}" method="POST">
+        <input type="hidden" name="postId" th:value="${post.id}">
+        <input class="submit-button" type="submit" value="Delete Post">
+    </form>
+    <div class = "form-container">
+        <form th:action="@{/save-comment}" th:object="${comment}" method="POST">
+            <label for="name">Name:</label>
+            <input type="text" id="name" th:field="*{name}">
+            <label for="email">Email:</label>
+            <input type="email" id="email" th:field="*{email}">
+            <label for="content">Comment:</label>
+            <input type="text" id="content" th:field="*{content}">
+            <input type="hidden" id="createdAt" th:value="${createdAt}">
+            <input type="hidden" name="postId" th:value="${post.id}">
+            <input class="submit-button" type="submit" value="Add Comment">
+        </form>
+    </div>
+    <ul>
+        <li th:each="comment : ${comments}">
+            <p><strong>Name:</strong> <span th:text="${comment.name}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${comment.email}"></span></p>
+            <p><strong>Comment :</strong> <span th:text="${comment.content}"></span></p>
+
+            <form th:action="@{/update-comment}" method="POST">
+                <input type="hidden" name="commentId" th:value="${comment.id}">
+                <input type="hidden" name="createdAt" th:value="${comment.createdAt}">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <input class="submit-button" type="submit" value="Update">
+            </form>
+            <form th:action="@{/delete-comment}" method="POST">
+                <input type="hidden" name="commentId" th:value="${comment.id}">
+                <input type="hidden" name="postId" th:value="${post.id}">
+                <input class="submit-button" type="submit" value="Delete">
+            </form>
+        </li>
+    </ul>
+
+</div>
+</body>
+</html>

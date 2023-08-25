@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Comment</title>
+    <style>
+        .container form{
+            display : flex;
+            flex-direction : column;
+            justify-container : space-around;
+            height : 20vh;
+            width : 20vw;
+            padding-top : 2rem;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}">Home </a>
+<div class="container">
+    <form th:action="@{/save-comment}" th:object="${comment}" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}">
+
+        <label for="content">Comment:</label>
+        <input type="text" id="content" th:field="*{content}">
+
+        <input type="hidden" th:field="*{id}">
+
+        <input type="hidden" name="postId" th:value="${comment.postId}">
+
+        <input class="submit-button" type="submit" value="Save">
+        <a th:href="@{'/post/'+{post.id}}">Cancel</a>
+    </form>
+</div>
+</body>
+</html>
