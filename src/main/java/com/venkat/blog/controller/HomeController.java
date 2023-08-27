@@ -3,6 +3,8 @@ package com.venkat.blog.controller;
 import com.venkat.blog.model.Post;
 import com.venkat.blog.model.Tag;
 import com.venkat.blog.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,10 +29,13 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model) {
+
         return getListOfBlogs(1, "publishedAt", "desc", null,
                               null, null,null, null, model);
     }
 
+     static Set<String> authors = new HashSet<>();
+     static Set<String> tags = new HashSet<>();
     @GetMapping("/page/{pageNo}")
     public String getListOfBlogs(@PathVariable Integer pageNo, @RequestParam(defaultValue = "publishedAt") String sortField,
                                  @RequestParam(defaultValue = "desc") String sortDirection,
@@ -49,6 +54,7 @@ public class HomeController {
         Page<Post> posts = null;
 
         if (search != null && !search.isEmpty()) {
+
             return "redirect:/search/page/" + pageNo + "?search=" + search;
         }
 
@@ -59,8 +65,13 @@ public class HomeController {
             posts = postService.findAll(pageable);
         }
 
-        Set<String> authors = postService.findAllAuthors();
-        Set<String> tags = postService.findTagNamesWithPublishedPosts();
+        if(pageNo == 1){
+            authors.clear();
+            tags.clear();
+
+            authors.addAll(postService.findAllAuthors());
+            tags.addAll(postService.findTagNamesWithPublishedPosts());
+        }
 
         model.addAttribute("posts", posts.getContent());
         model.addAttribute("currentPage", pageNo);
@@ -77,7 +88,8 @@ public class HomeController {
         return "blogs";
     }
 
-
+    static Set<String> uniqueAuthors = new HashSet<>();
+    static Set<String> uniqueTags = new HashSet<>();
     @GetMapping("/search/page/{pageNo}")
     public String searchBlogs(@PathVariable Integer pageNo,
                               @RequestParam("search") String search,
@@ -93,7 +105,6 @@ public class HomeController {
         Sort sort = sortDirection.equals("desc") ?
                     Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
 
-
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
         Page<Post> posts = null;
@@ -105,8 +116,13 @@ public class HomeController {
             posts = postService.findAllPostsBySearchRequest(search, pageable);
         }
 
-        Set<String> uniqueAuthors = postService.findDistinctAuthorsBySearchRequest(search);
-        Set<String> uniqueTags = postService.findDistinctTagsBySearchRequest(search);
+        if(pageNo == 1) {
+            uniqueTags.clear();
+            uniqueAuthors.clear();
+
+            uniqueTags.addAll(postService.findDistinctTagsBySearchRequest(search));
+            uniqueAuthors.addAll(postService.findDistinctAuthorsBySearchRequest(search));
+        }
 
         model.addAttribute("posts", posts.getContent());
         model.addAttribute("totalPages", posts.getTotalPages());

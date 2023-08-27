@@ -5,6 +5,7 @@ import com.venkat.blog.repository.PostRepository;
 import com.venkat.blog.repository.TagRepository;
 import com.venkat.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -98,6 +99,7 @@ public class PostServiceImpl implements PostService {
 
         return postRepository.findDistinctTagsBySearchRequest(searchRequest);
     }
+
 
 
 }
