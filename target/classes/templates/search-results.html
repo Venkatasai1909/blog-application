@@ -27,52 +27,62 @@
 <body>
 <a th:href="@{/}">Home </a>
 <h2>Search Results on <span th:text="${search}"></span></h2>
-<form th:action="@{'/search/page/'+1}" method="get" id="searchForm">
-    <label for="search">Search:</label>
-    <input type="search" id="search" name="search" placeholder="Enter your search term">
-    <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
-    <input type="hidden" name="sortField" th:value="${sortField}" />
-    <input type="submit" value="Search">
-</form>
+<div>
+    <form th:action="@{'/search/page/'+1}" method="get" id="searchForm">
+        <label for="search">Search:</label>
+        <input type="search" id="search" name="search" placeholder="Enter your search term">
+        <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
+        <input type="hidden" name="sortField" th:value="${sortField}" />
+        <input type="submit" value="Search">
+    </form>
 
-<form th:action="@{'/search/page/' + ${currentPage}}" method="get" id="sortForm">
-    <label for="sortDirection">Sort by:</label>
-    <select name="sortField" id="sortField">
-        <option value="publishedAt" th:selected="${sortField == 'publishedAt'}">Published Date</option>
-    </select>
-    <select name="sortDirection" id="sortDirection">
-        <option value="asc" th:selected="${sortDirection == 'asc'}">Ascending</option>
-        <option value="desc" th:selected="${sortDirection == 'desc'}">Descending</option>
-    </select>
-    <input type="hidden" name="search" th:value="${search}" />
-    <button type="submit">Apply Sorting</button>
-</form>
+    <form th:action="@{'/search/page/' + ${currentPage}}" method="get" id="sortForm">
+        <label for="sortDirection">Sort by Published Date:</label>
+        <select name="sortDirection" id="sortDirection">
+            <option value="asc" th:selected="${sortDirection == 'asc'}">Old to new Posts</option>
+            <option value="desc" th:selected="${sortDirection == 'desc'}">Recommended</option>
+        </select>
+        <input type="hidden" name="search" th:value="${search}">
+        <input type="hidden" name="sortField" th:value="${sortField}" />
+        <input type="hidden" name="selectedAuthors" th:each="author : ${selectedAuthors}" th:value="${author}" />
+        <input type="hidden" name="selectedTags" th:each="tag : ${selectedTags}" th:value="${tag}" />
+        <input th:if="${startDate}" type="hidden" name="startDate" th:value="${startDate}">
+        <input th:if="${endDate}" type="hidden" name="endDate" th:value="${endDate}">
+
+        <button type="submit">Apply Sorting</button>
+    </form>
+</div>
 <div class="main-container">
     <form th:action="@{'/search/page/'+${currentPage}}" method="get" id="authorFilterForm">
-        <div>
+        <div class="filter-section">
             <h2>Authors</h2>
             <div th:each="author : ${authors}">
-                <input type="checkbox" th:value="${author}" name="authors">
-                <label th:text="${author}"></label>
+                <input type="checkbox" th:id="'author-' + ${author}" th:name="selectedAuthors" th:value="${author}">
+                <label th:for="'author-' + ${author}" th:text="${author}"></label>
             </div>
         </div>
-        <div>
+
+        <div class="filter-section">
             <h2>Tags</h2>
             <div th:each="tag : ${tags}">
-                <input type="checkbox" th:value="${tag}" name="tags">
-                <label th:text="${tag}"></label>
+                <input type="checkbox" th:id="'tag-' + ${tag}" th:name="selectedTags" th:value="${tag}">
+                <label th:for="'tag-' + ${tag}" th:text="${tag}"></label>
             </div>
         </div>
-        <div>
-            <h2>Published Date : </h2>
-            <input type="datetime-local" th:value="${startDate}" name="startDate">
-            <input type="datetime-local" th:value="${endDate}" name="endDate">
-        </div>
-        <div>
+
+        <div class = "buttons">
+            <div >
+                <h2>Published Date : </h2>
+                <input type="datetime-local" th:value="${startDate}" name="startDate">
+                <input type="datetime-local" th:value="${endDate}" name="endDate">
+            </div>
+            <br>
+            <br>
+            <input type="hidden" name="sortField" th:value="${sortField}" />
             <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
             <input type="hidden" name="search" th:value="${search}">
-            <input type="hidden" name="sortField" th:value="${sortField}" />
-            <input type="submit" value="Apply Filters" class = "submit">
+            <input type="reset" value="Reset">
+            <input type="submit" value="Apply Filters">
         </div>
     </form>
 
@@ -98,20 +108,31 @@
             </td>
         </tr>
     </table>
-    </div>
-<div>
-    <a th:if="${currentPage < totalPages}"
-       th:href="@{/search/page/{pageNo}(pageNo=${currentPage + 1}, search=${search})}">
+</div>
+
+
+<div th:if="${currentPage < totalPages}">
+    <a th:href="@{/search/page/{pageNo}(pageNo=${currentPage + 1}, search=${search}, sortDirection=${sortDirection}, sortField=${sortField})}">
         Next Page
     </a>
 </div>
 
-<div>
-    <a th:if="${currentPage > 1}"
-       th:href="@{/search/page/{pageNo}(pageNo=${currentPage - 1}, search=${search})}">
+<div th:if="${currentPage > 1}">
+    <a th:href="@{/search/page/{pageNo}(pageNo=${currentPage - 1}, search=${search}, sortDirection=${sortDirection}, sortField=${sortField})}">
         Previous Page
     </a>
 </div>
+<!--<div th:if="${currentPage < totalPages}">-->
+<!--    <a th:href="@{/search/page/{pageNo}(pageNo=${currentPage + 1})}?search=${search}&sortDirection=${sortDirection}&sortField=${sortField}">-->
+<!--        Next Page-->
+<!--    </a>-->
+<!--</div>-->
+
+<!--<div th:if="${currentPage > 1}">-->
+<!--    <a th:href="@{/search/page/{pageNo}(pageNo=${currentPage - 1})}?search=${search}&sortDirection=${sortDirection}&sortField=${sortField}">-->
+<!--        Previous Page-->
+<!--    </a>-->
+<!--</div>-->
 
 
 

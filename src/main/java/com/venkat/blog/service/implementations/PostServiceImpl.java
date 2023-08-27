@@ -54,12 +54,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<String> findAllAuthors() {
+    public Set<String> findAllAuthors() {
         return postRepository.findAllDistinctAuthors();
     }
 
     @Override
-    public List<String> findTagNamesWithPublishedPosts() {
+    public Set<String> findTagNamesWithPublishedPosts() {
         return postRepository.findTagsWithPublishedPosts();
     }
 
@@ -70,7 +70,7 @@ public class PostServiceImpl implements PostService {
         int tagList = tagNames == null ? 1:0;
         int dates = (startDate == null || endDate == null) ? 1:0;
 
-       return  postRepository.filterPosts(authorList, tagList, dates,
+        return  postRepository.filterPosts(authorList, tagList, dates,
                 authorNames, tagNames, startDate, endDate, pageable);
     }
 
@@ -82,8 +82,20 @@ public class PostServiceImpl implements PostService {
         int startAndEndDate = (startDate == null || endDate == null) ? 1:0;
 
         return postRepository.filterAndSearchPosts(searchRequest, authorList, tagList, startAndEndDate,
-                                                        authorNames, tagNames, startDate, endDate,pageable);
+                authorNames, tagNames, startDate, endDate,pageable);
 
+    }
+
+    @Override
+    public Set<String> findDistinctAuthorsBySearchRequest(String searchRequest) {
+
+        return postRepository.findDistinctAuthorsBySearchRequest(searchRequest);
+    }
+
+    @Override
+    public Set<String> findDistinctTagsBySearchRequest(String searchRequest) {
+
+        return postRepository.findDistinctTagsBySearchRequest(searchRequest);
     }
 
 

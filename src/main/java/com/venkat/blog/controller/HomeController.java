@@ -32,11 +32,11 @@ public class HomeController {
     }
 
     @GetMapping("/page/{pageNo}")
-    public String getListOfBlogs(@PathVariable int pageNo, @RequestParam(defaultValue = "publishedAt") String sortField,
+    public String getListOfBlogs(@PathVariable Integer pageNo, @RequestParam(defaultValue = "publishedAt") String sortField,
                                  @RequestParam(defaultValue = "desc") String sortDirection,
                                  @RequestParam(value = "search", required = false) String search,
-                                 @RequestParam(value = "authors", required = false) List<String> selectedAuthors,
-                                 @RequestParam(value = "tags", required = false) List<String> selectedTags,
+                                 @RequestParam(value = "selectedAuthors", required = false) List<String> selectedAuthors,
+                                 @RequestParam(value = "selectedTags", required = false) List<String> selectedTags,
                                  @RequestParam(value = "startDate", required = false) LocalDateTime startDate,
                                  @RequestParam(value = "endDate", required = false) LocalDateTime endDate,
                                  Model model) {
@@ -57,16 +57,18 @@ public class HomeController {
             posts = postService.findAll(pageable);
         }
 
-        System.out.println(posts.getSize());
-
-        List<String> authors = postService.findAllAuthors();
-        List<String> tags = postService.findTagNamesWithPublishedPosts();
+        Set<String> authors = postService.findAllAuthors();
+        Set<String> tags = postService.findTagNamesWithPublishedPosts();
 
         model.addAttribute("posts", posts.getContent());
         model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", posts.getTotalPages());
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
+        model.addAttribute("selectedAuthors", selectedAuthors);
+        model.addAttribute("selectedTags", selectedTags);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
         model.addAttribute("authors", authors);
         model.addAttribute("tags", tags);
 
@@ -75,12 +77,12 @@ public class HomeController {
 
 
     @GetMapping("/search/page/{pageNo}")
-    public String searchBlogs(@PathVariable int pageNo,
+    public String searchBlogs(@PathVariable Integer pageNo,
                               @RequestParam("search") String search,
                               @RequestParam(value = "sortDirection", defaultValue = "desc") String sortDirection,
                               @RequestParam(value = "sortField", defaultValue = "publishedAt") String sortField,
-                              @RequestParam(value = "authors", required = false) List<String> selectedAuthors,
-                              @RequestParam(value = "tags", required = false) List<String> selectedTags,
+                              @RequestParam(value = "selectedAuthors", required = false) List<String> selectedAuthors,
+                              @RequestParam(value = "selectedTags", required = false) List<String> selectedTags,
                               @RequestParam(value = "startDate", required = false) LocalDateTime startDate,
                               @RequestParam(value = "endDate", required = false) LocalDateTime endDate,
                               Model model) {
@@ -96,39 +98,23 @@ public class HomeController {
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
-        Page<Post> posts = null;
+        Page<Post> posts = postService.filterAndSearchPosts(search, selectedAuthors, selectedTags, startDate, endDate, pageable);
 
-        if (selectedAuthors != null || selectedTags != null || startDate != null || endDate != null) {
-            posts =postService.filterAndSearchPosts(search, selectedAuthors, selectedTags, startDate, endDate, pageable);
-        } else {
-            posts = postService.findAllPostsBySearchRequest(search, pageable);
-        }
-
-        Set<String> uniqueAuthors = new HashSet<>();
-
-        List<Post> postListForAuthors = posts.getContent();
-        for (Post post : postListForAuthors) {
-            uniqueAuthors.add(post.getAuthor());
-        }
-
-        Set<String> uniqueTags = new HashSet<>();
-        List<Post> postListForTags = posts.getContent();
-
-        for (Post post :  postListForTags ) {
-            for (Tag tag : post.getTags()) {
-                uniqueTags.add(tag.getName());
-            }
-        }
+        Set<String> uniqueAuthors = postService.findDistinctAuthorsBySearchRequest(search);
+        Set<String> uniqueTags = postService.findDistinctTagsBySearchRequest(search);
 
         model.addAttribute("posts", posts.getContent());
-        model.addAttribute("currentPage", pageNo);
         model.addAttribute("totalPages", posts.getTotalPages());
         model.addAttribute("search", search);
-        model.addAttribute("pageNo", pageNo);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
         model.addAttribute("authors", uniqueAuthors);
+        model.addAttribute("currentPage", pageNo);
         model.addAttribute("tags", uniqueTags);
+        model.addAttribute("selectedAuthors", selectedAuthors);
+        model.addAttribute("selectedTags", selectedTags);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
 
         return "search-results";
     }
