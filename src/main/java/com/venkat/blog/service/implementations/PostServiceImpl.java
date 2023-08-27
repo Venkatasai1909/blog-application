@@ -64,24 +64,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> filterPosts(List<String> authorNames,
-                                  List<String> tagNames, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
-        int authorList = authorNames == null ? 1:0;
-        int tagList = tagNames == null ? 1:0;
-        int dates = (startDate == null || endDate == null) ? 1:0;
+    public Page<Post> filterPosts(Set<String> authorNames,
+                                  Set<String> tagNames, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        int authorList = authorNames == null || authorNames.isEmpty() ? 1 : 0;
+        int tagList = tagNames == null || tagNames.isEmpty() ? 1 : 0;
+        int dates = (startDate == null || endDate == null) ? 1 : 0;
 
-        return  postRepository.filterPosts(authorList, tagList, dates,
+        return postRepository.filterPosts(authorList, tagList, dates,
                 authorNames, tagNames, startDate, endDate, pageable);
     }
 
-    @Override
-    public Page<Post> filterAndSearchPosts(String searchRequest, List<String> authorNames, List<String> tagNames, LocalDateTime startDate,
-                                           LocalDateTime endDate, Pageable pageable) {
-        int authorList = authorNames == null ? 1:0;
-        int tagList = tagNames == null ? 1:0;
-        int startAndEndDate = (startDate == null || endDate == null) ? 1:0;
 
-        return postRepository.filterAndSearchPosts(searchRequest, authorList, tagList, startAndEndDate,
+    @Override
+    public Page<Post> filterAndSearchPosts(String searchRequest, Set<String> authorNames, Set<String> tagNames, LocalDateTime startDate,
+                                           LocalDateTime endDate, Pageable pageable) {
+        int authorList = authorNames == null || authorNames.isEmpty() ? 1 : 0;
+        int tagList = tagNames == null || tagNames.isEmpty() ? 1 : 0;
+        int dates = (startDate == null || endDate == null) ? 1 : 0;
+
+        return postRepository.filterAndSearchPosts(searchRequest, authorList, tagList, dates,
                 authorNames, tagNames, startDate, endDate,pageable);
 
     }

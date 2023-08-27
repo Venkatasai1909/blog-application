@@ -35,14 +35,15 @@ public class HomeController {
     public String getListOfBlogs(@PathVariable Integer pageNo, @RequestParam(defaultValue = "publishedAt") String sortField,
                                  @RequestParam(defaultValue = "desc") String sortDirection,
                                  @RequestParam(value = "search", required = false) String search,
-                                 @RequestParam(value = "selectedAuthors", required = false) List<String> selectedAuthors,
-                                 @RequestParam(value = "selectedTags", required = false) List<String> selectedTags,
+                                 @RequestParam(value = "selectedAuthors", required = false) Set<String> selectedAuthors,
+                                 @RequestParam(value = "selectedTags", required = false) Set<String> selectedTags,
                                  @RequestParam(value = "startDate", required = false) LocalDateTime startDate,
                                  @RequestParam(value = "endDate", required = false) LocalDateTime endDate,
                                  Model model) {
 
         int pageSize = 10;
-        Sort sort = sortDirection.equals("desc") ? Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
+        Sort sort = sortDirection.equals("desc") ?
+                                          Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         Page<Post> posts = null;
@@ -50,17 +51,12 @@ public class HomeController {
         if (search != null && !search.isEmpty()) {
             return "redirect:/search/page/" + pageNo + "?search=" + search;
         }
-
+        
         if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
                 || startDate != null || endDate != null) {
-            System.out.println(selectedAuthors);
-            System.out.println(selectedTags);
             posts = postService.filterPosts(selectedAuthors, selectedTags, startDate, endDate, pageable);
-            System.out.println(posts.getContent());
-            System.out.println("In filter page" + pageNo);
         } else {
             posts = postService.findAll(pageable);
-            System.out.println("In Normal page" + pageNo);
         }
 
         Set<String> authors = postService.findAllAuthors();
@@ -87,14 +83,15 @@ public class HomeController {
                               @RequestParam("search") String search,
                               @RequestParam(value = "sortDirection", defaultValue = "desc") String sortDirection,
                               @RequestParam(value = "sortField", defaultValue = "publishedAt") String sortField,
-                              @RequestParam(value = "selectedAuthors", required = false) List<String> selectedAuthors,
-                              @RequestParam(value = "selectedTags", required = false) List<String> selectedTags,
+                              @RequestParam(value = "selectedAuthors", required = false) Set<String> selectedAuthors,
+                              @RequestParam(value = "selectedTags", required = false) Set<String> selectedTags,
                               @RequestParam(value = "startDate", required = false) LocalDateTime startDate,
                               @RequestParam(value = "endDate", required = false) LocalDateTime endDate,
                               Model model) {
         int pageSize = 10;
 
-        Sort sort = sortDirection.equals("desc") ? Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
+        Sort sort = sortDirection.equals("desc") ?
+                    Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
 
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
@@ -102,12 +99,9 @@ public class HomeController {
         Page<Post> posts = null;
         if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
                 || startDate != null || endDate != null) {
-            System.out.println(selectedAuthors);
-            System.out.println(selectedTags);
-            System.out.println("IN search and FIlter page");
-            posts = posts = postService.filterAndSearchPosts(search, selectedAuthors, selectedTags, startDate, endDate, pageable);
+            posts = posts = postService.filterAndSearchPosts(search, selectedAuthors, selectedTags,
+                                                              startDate, endDate, pageable);
         } else {
-            System.out.println("In Search Page ");
             posts = postService.findAllPostsBySearchRequest(search, pageable);
         }
 
@@ -131,4 +125,3 @@ public class HomeController {
     }
 
 }
-//http://localhost:8080/page/2?search=&sortDirection=asc&sortField=publishedAt&selectedAuthors=&selectedTags=archaeology&selectedTags=art&selectedTags=artificial%20intelligence&selectedTags=astronomy&selectedTags=civilizations&selectedTags=coding&selectedTags=colonization&selectedTags=cooking&selectedTags=culinary&selectedTags=dreams&selectedTags=ethics&selectedTags=exploration&selectedTags=fair&selectedTags=fashion&selectedTags=fiction&selectedTags=food&selectedTags=future&selectedTags=galaxies&selectedTags=good&selectedTags=habits&selectedTags=heritage&selectedTags=history&selectedTags=innovation&selectedTags=jazz&selectedTags=light&selectedTags=Mediterranean&selectedTags=mindfulness&selectedTags=music&selectedTags=nature&selectedTags=open&selectedTags=photography&selectedTags=positive%20psychology&selectedTags=productivity&selectedTags=programming&selectedTags=psychology&selectedTags=read&selectedTags=recipes&selectedTags=renewable%20energy&selectedTags=self-care&selectedTags=self-improvement&selectedTags=space&selectedTags=space%20exploration&selectedTags=storytelling&startDate=&endDate=

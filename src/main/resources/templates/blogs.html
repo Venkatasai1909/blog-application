@@ -87,8 +87,8 @@
             <option value="desc" th:selected="${sortDirection == 'desc'}">Recommended</option>
         </select>
         <input type="hidden" name="sortField" th:value="${sortField}" />
-        <input type="hidden" name="selectedAuthors" th:each="author : ${selectedAuthors}" th:value="${author}" />
-        <input type="hidden" name="selectedTags" th:each="tag : ${selectedTags}" th:value="${tag}" />
+        <input th:if="${selectedAuthors}" type="hidden" name="selectedAuthors" th:each="author : ${selectedAuthors}" th:value="${author}" />
+        <input th:if="${selectedTags}" type="hidden" name="selectedTags" th:each="tag : ${selectedTags}" th:value="${tag}" />
         <input th:if="${startDate}" type="hidden" name="startDate" th:value="${startDate}">
         <input th:if="${endDate}" type="hidden" name="endDate" th:value="${endDate}">
 
@@ -170,6 +170,44 @@
      </button>
 </div>
 
+<!--<div class="next-page">-->
+<!--    <button th:if="${currentPage < totalPages}">-->
+<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage + 1}, sortDirection=${sortDirection}, sortField=${sortField},-->
+<!--        selectedAuthors=${selectedAuthors}, ${selectedTags != null and selectedTags != '' ? ',selectedTags=' + selectedTags : ''},-->
+<!--        startDate=${startDate}, endDate=${endDate})}">-->
+<!--            Next Page-->
+<!--        </a>-->
+<!--    </button>-->
+<!--</div>-->
+
+<!--<div class="previous-page">-->
+<!--    <button th:if="${currentPage > 1}">-->
+<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage - 1}, sortDirection=${sortDirection}, sortField=${sortField},-->
+<!--        selectedAuthors=${selectedAuthors}, ${selectedTags != null and selectedTags != '' ? ',selectedTags=' + selectedTags : ''},-->
+<!--        startDate=${startDate}, endDate=${endDate})}">-->
+<!--            Previous Page-->
+<!--        </a>-->
+<!--    </button>-->
+<!--</div>-->
+
+
+<!--<div class="next-page" th:if="${currentPage < totalPages}">-->
+<!--    <button>-->
+<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage + 1}, sortDirection=${sortDirection}, sortField=${sortField}-->
+<!--        , selectedAuthors=${selectedAuthors}, ${selectedTags != null ? 'selectedTags=' + selectedTags : ''}, startDate=${startDate}, endDate=${endDate})}">-->
+<!--            Next Page-->
+<!--        </a>-->
+<!--    </button>-->
+<!--</div>-->
+
+<!--<div class="previous-page" th:if="${currentPage > 1}">-->
+<!--    <button>-->
+<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage - 1}, sortDirection=${sortDirection}, sortField=${sortField}-->
+<!--        , selectedAuthors=${selectedAuthors}, ${selectedTags != null ? 'selectedTags=' + selectedTags : ''}, startDate=${startDate}, endDate=${endDate})}">-->
+<!--            Previous Page-->
+<!--        </a>-->
+<!--    </button>-->
+<!--</div>-->
 
 
 <script th:inline="javascript">

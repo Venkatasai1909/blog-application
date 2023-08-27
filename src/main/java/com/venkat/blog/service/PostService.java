@@ -19,10 +19,10 @@ public interface PostService {
     Page<Post> findAllPostsBySearchRequest(String search, Pageable pageable);
     Set<String> findAllAuthors();
     Set<String> findTagNamesWithPublishedPosts();
-    Page<Post> filterPosts(List<String> authors,
-                           List<String> tagNames, LocalDateTime startDate, LocalDateTime endDate,  Pageable pageable);
+    Page<Post> filterPosts(Set<String> authors,
+                           Set<String> tagNames, LocalDateTime startDate, LocalDateTime endDate,  Pageable pageable);
 
-    Page<Post> filterAndSearchPosts(String searchRequest,List<String> authors, List<String> tagNames, LocalDateTime startDate,
+    Page<Post> filterAndSearchPosts(String searchRequest,Set<String> authors, Set<String> tagNames, LocalDateTime startDate,
                                     LocalDateTime endDate, Pageable pageable);
 
     Set<String> findDistinctAuthorsBySearchRequest(String searchRequest);

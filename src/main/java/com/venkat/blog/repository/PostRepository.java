@@ -38,12 +38,13 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT post FROM Post post WHERE post.isPublished = true " +
             "AND (:emptyAuthors = 1 OR post.author IN :authorNames)" +
-            "AND (:emptyTags = 1 OR EXISTS(SELECT tag FROM Tag tag WHERE tag.name IN :tagNames AND tag MEMBER OF post.tags))" +
+            "AND (:emptyTags = 1 OR EXISTS(SELECT postTag FROM Post postTag JOIN postTag.tags tag WHERE postTag = post AND tag.name IN :tagNames))" +
             "AND (:emptyDates = 1 OR post.publishedAt BETWEEN :startDate AND :endDate)")
     Page<Post> filterPosts(@Param("emptyAuthors") int emptyAuthors, @Param("emptyTags") int emptyTags,
-                           @Param("emptyDates") int emptyDates, @Param("authorNames") List<String> authorNames,
-                           @Param("tagNames") List<String> tagNames, @Param("startDate") LocalDateTime startDate,
+                           @Param("emptyDates") int emptyDates, @Param("authorNames") Set<String> authorNames,
+                           @Param("tagNames") Set<String> tagNames, @Param("startDate") LocalDateTime startDate,
                            @Param("endDate") LocalDateTime endDate, Pageable pageable);
+
 
     @Query("SELECT DISTINCT post FROM Post post " +
             "LEFT JOIN post.tags tag " +
@@ -52,15 +53,15 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "OR post.author LIKE %:searchRequest% " +
             "OR tag.name LIKE %:searchRequest%) " +
             "AND (:emptyAuthors = 1 OR post.author IN :authorNames) " +
-            "AND (:emptyTags = 1 OR EXISTS(SELECT tag FROM Tag tag WHERE tag.name IN :tagNames AND tag MEMBER OF post.tags)) " +
+            "AND (:emptyTags = 1 OR EXISTS(SELECT postTag FROM Post postTag JOIN postTag.tags tag WHERE postTag = post AND tag.name IN :tagNames))" +
             "AND (:dates = 1 OR post.publishedAt BETWEEN :startDate AND :endDate) " +
             "AND post.isPublished = true")
     Page<Post> filterAndSearchPosts(@Param("searchRequest") String searchRequest,
                                     @Param("emptyAuthors") int emptyAuthors,
                                     @Param("emptyTags") int emptyTags,
                                     @Param("dates") int dates,
-                                    @Param("authorNames") List<String> authorNames,
-                                    @Param("tagNames") List<String> tagNames,
+                                    @Param("authorNames") Set<String> authorNames,
+                                    @Param("tagNames") Set<String> tagNames,
                                     @Param("startDate") LocalDateTime startDate,
                                     @Param("endDate") LocalDateTime endDate,
                                     Pageable pageable);
