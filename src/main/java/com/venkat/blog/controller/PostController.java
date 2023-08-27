@@ -40,9 +40,13 @@ public class PostController {
     @PostMapping("/save-post")
     public String savePost(@ModelAttribute("post") Post modelPost, @RequestParam("tagSet") String requestTags,
                            @RequestParam(value = "action") String action) {
+        if(modelPost.getCreatedAt() == null) {
+            modelPost.setCreatedAt(LocalDateTime.now());
+        }
+
         String[] tagArray = requestTags.split(",");
         Set<Tag> tagSet = new HashSet<>();
-        modelPost.setExcerpt(modelPost.getContent().substring(0,20));
+        modelPost.setExcerpt(modelPost.getContent().substring(0, 20));
 
         for (String tagName : tagArray) {
             tagName = tagName.trim();
@@ -52,34 +56,42 @@ public class PostController {
             } else {
                 Tag newTag = new Tag();
                 newTag.setName(tagName);
+                newTag.setCreatedAt(LocalDateTime.now());
                 tagService.save(newTag);
 
                 tagSet.add(newTag);
             }
         }
 
-            if(action.equals("Draft")) {
-                modelPost.setPublished(false);
-            } else if(action.equals("Publish")) {
-                modelPost.setPublished(true);
-                modelPost.setPublishedAt(LocalDateTime.now());
-            }
-            else if(action.equals("Update")){
-                modelPost.setUpdatedAt(LocalDateTime.now());
-            }
+        if(action.equals("Draft")) {
+            modelPost.setPublished(false);
+        }
+
+        if(action.equals("Publish")) {
+            modelPost.setPublished(true);
+        }
+
+        if(action.equals("Update")) {
+            modelPost.setUpdatedAt(LocalDateTime.now());
+            modelPost.setPublished(true);
+        }
+
 
         modelPost.setTags(tagSet);
         postService.save(modelPost);
 
-        if(action.equals("Update Draft") || action.equals("Draft")) {
+        if(action.equals("Update Draft")) {
             modelPost.setUpdatedAt(LocalDateTime.now());
+            modelPost.setPublished(false);
+        }
+
+        if(action.equals("Update Draft") || action.equals("Draft")) {
             return "redirect:/drafts";
         }
 
-       return "redirect:/";
-
-
+        return "redirect:/";
     }
+
 
     @GetMapping("/post/{id}")
     public String getPost(@PathVariable Long id, Model model) {
@@ -137,11 +149,9 @@ public class PostController {
     @GetMapping("/drafts")
     public String  drafts(Model model) {
         List<Post> posts = postService.findAllByDrafts();
-        for(Post post : posts) {
-            System.out.println(post.getId());
-        }
 
         model.addAttribute("posts", posts);
+
         return "drafts";
     }
 

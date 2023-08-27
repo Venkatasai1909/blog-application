@@ -51,7 +51,7 @@ public class HomeController {
         if (search != null && !search.isEmpty()) {
             return "redirect:/search/page/" + pageNo + "?search=" + search;
         }
-        
+
         if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
                 || startDate != null || endDate != null) {
             posts = postService.filterPosts(selectedAuthors, selectedTags, startDate, endDate, pageable);
