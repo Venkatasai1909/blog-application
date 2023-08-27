@@ -101,7 +101,8 @@
         <div class="filter-section">
             <h2>Authors</h2>
             <div th:each="author : ${authors}">
-                <input type="checkbox" th:id="'author-' + ${author}" th:name="selectedAuthors" th:value="${author}">
+                <input type="checkbox" th:id="'author-' + ${author}" th:name="selectedAuthors" th:value="${author}"
+                       th:checked="${selectedAuthors != null and #strings.contains(selectedAuthors, author)}">
                 <label th:for="'author-' + ${author}" th:text="${author}"></label>
             </div>
         </div>
@@ -109,7 +110,8 @@
         <div class="filter-section">
             <h2>Tags</h2>
             <div th:each="tag : ${tags}">
-                <input type="checkbox" th:id="'tag-' + ${tag}" th:name="selectedTags" th:value="${tag}">
+                <input type="checkbox" th:id="'tag-' + ${tag}" th:name="selectedTags" th:value="${tag}"
+                       th:checked="${selectedTags != null and #strings.contains(selectedTags, tag)}">
                 <label th:for="'tag-' + ${tag}" th:text="${tag}"></label>
             </div>
         </div>
@@ -124,7 +126,11 @@
             <br>
             <input type="hidden" name="sortField" th:value="${sortField}" />
             <input type="hidden" name="sortDirection" th:value="${sortDirection}" />
-            <input type="reset" value="Reset">
+            <input type="hidden" name="selectedAuthors" th:each="author : ${selectedAuthors}" th:value="${author}" />
+            <input type="hidden" name="selectedTags" th:each="tag : ${selectedTags}" th:value="${tag}" />
+            <input th:if="${startDate}" type="hidden" name="startDate" th:value="${startDate}">
+            <input th:if="${endDate}" type="hidden" name="endDate" th:value="${endDate}">
+            <input type="reset" value="Reset" id="resetButton">
             <input type="submit" value="Apply Filters">
         </div>
     </form>
@@ -146,21 +152,37 @@
 </div>
 
 
-<div class="next-page">
-    <button th:if="${currentPage < totalPages}">
-        <a th:href="@{'/page/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDirection=' + ${sortDirection}}">
+<div class = "next-page">
+     <button th:if="${currentPage < totalPages}">
+        <a th:href="@{/page/{pageNo}(pageNo=${currentPage + 1}, sortDirection=${sortDirection}, sortField=${sortField}
+        , selectedAuthors=${selectedAuthors}, selectedTags=${selectedTags},startDate=${startDate}, endDate=${endDate})}">
             Next Page
         </a>
-    </button>
+     </button>
 </div>
 
-<div class="previous-page">
-    <button th:if="${currentPage > 1}">
-        <a th:href="@{'/page/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDirection=' + ${sortDirection}}">
+<div calss="previous-page" >
+     <button th:if="${currentPage > 1}">
+        <a th:href="@{/page/{pageNo}(pageNo=${currentPage - 1}, sortDirection=${sortDirection}, sortField=${sortField}
+        , selectedAuthors=${selectedAuthors}, selectedTags=${selectedTags},startDate=${startDate}, endDate=${endDate})}">
             Previous Page
         </a>
-    </button>
+     </button>
 </div>
+
+
+
+<script th:inline="javascript">
+    document.getElementById("resetButton").addEventListener("click", function(event) {
+    event.preventDefault();
+        var checkboxes = document.querySelectorAll('[name="selectedAuthors"], [name="selectedTags"]');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.checked = false;
+        });
+        window.location.href="http://localhost:8080/";
+    });
+
+</script>
 
 </body>
 </html>

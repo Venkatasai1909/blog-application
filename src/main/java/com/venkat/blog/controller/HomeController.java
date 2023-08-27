@@ -51,10 +51,16 @@ public class HomeController {
             return "redirect:/search/page/" + pageNo + "?search=" + search;
         }
 
-        if(selectedAuthors!=null || selectedTags!=null || startDate != null || endDate != null) {
+        if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
+                || startDate != null || endDate != null) {
+            System.out.println(selectedAuthors);
+            System.out.println(selectedTags);
             posts = postService.filterPosts(selectedAuthors, selectedTags, startDate, endDate, pageable);
+            System.out.println(posts.getContent());
+            System.out.println("In filter page" + pageNo);
         } else {
             posts = postService.findAll(pageable);
+            System.out.println("In Normal page" + pageNo);
         }
 
         Set<String> authors = postService.findAllAuthors();
@@ -88,17 +94,22 @@ public class HomeController {
                               Model model) {
         int pageSize = 10;
 
-        Sort sort;
+        Sort sort = sortDirection.equals("desc") ? Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
 
-        if (sortDirection.equals("desc")) {
-            sort = Sort.by(Sort.Order.desc(sortField));
-        } else {
-            sort = Sort.by(Sort.Order.asc(sortField));
-        }
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
-        Page<Post> posts = postService.filterAndSearchPosts(search, selectedAuthors, selectedTags, startDate, endDate, pageable);
+        Page<Post> posts = null;
+        if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
+                || startDate != null || endDate != null) {
+            System.out.println(selectedAuthors);
+            System.out.println(selectedTags);
+            System.out.println("IN search and FIlter page");
+            posts = posts = postService.filterAndSearchPosts(search, selectedAuthors, selectedTags, startDate, endDate, pageable);
+        } else {
+            System.out.println("In Search Page ");
+            posts = postService.findAllPostsBySearchRequest(search, pageable);
+        }
 
         Set<String> uniqueAuthors = postService.findDistinctAuthorsBySearchRequest(search);
         Set<String> uniqueTags = postService.findDistinctTagsBySearchRequest(search);
@@ -120,3 +131,4 @@ public class HomeController {
     }
 
 }
+//http://localhost:8080/page/2?search=&sortDirection=asc&sortField=publishedAt&selectedAuthors=&selectedTags=archaeology&selectedTags=art&selectedTags=artificial%20intelligence&selectedTags=astronomy&selectedTags=civilizations&selectedTags=coding&selectedTags=colonization&selectedTags=cooking&selectedTags=culinary&selectedTags=dreams&selectedTags=ethics&selectedTags=exploration&selectedTags=fair&selectedTags=fashion&selectedTags=fiction&selectedTags=food&selectedTags=future&selectedTags=galaxies&selectedTags=good&selectedTags=habits&selectedTags=heritage&selectedTags=history&selectedTags=innovation&selectedTags=jazz&selectedTags=light&selectedTags=Mediterranean&selectedTags=mindfulness&selectedTags=music&selectedTags=nature&selectedTags=open&selectedTags=photography&selectedTags=positive%20psychology&selectedTags=productivity&selectedTags=programming&selectedTags=psychology&selectedTags=read&selectedTags=recipes&selectedTags=renewable%20energy&selectedTags=self-care&selectedTags=self-improvement&selectedTags=space&selectedTags=space%20exploration&selectedTags=storytelling&startDate=&endDate=

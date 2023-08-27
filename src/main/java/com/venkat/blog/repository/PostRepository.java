@@ -37,13 +37,13 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     Set<String> findTagsWithPublishedPosts();
 
     @Query("SELECT post FROM Post post WHERE post.isPublished = true " +
-            "AND (:emptyAuthors = 1 OR post.author IN :authors)" +
+            "AND (:emptyAuthors = 1 OR post.author IN :authorNames)" +
             "AND (:emptyTags = 1 OR EXISTS(SELECT tag FROM Tag tag WHERE tag.name IN :tagNames AND tag MEMBER OF post.tags))" +
             "AND (:emptyDates = 1 OR post.publishedAt BETWEEN :startDate AND :endDate)")
     Page<Post> filterPosts(@Param("emptyAuthors") int emptyAuthors, @Param("emptyTags") int emptyTags,
-                           @Param("emptyDates") int emptyDates, @Param("authors") List<String> authors,
+                           @Param("emptyDates") int emptyDates, @Param("authorNames") List<String> authorNames,
                            @Param("tagNames") List<String> tagNames, @Param("startDate") LocalDateTime startDate,
-                           @Param("endDate") LocalDateTime endDate, @Param("endDate") Pageable pageable);
+                           @Param("endDate") LocalDateTime endDate, Pageable pageable);
 
     @Query("SELECT DISTINCT post FROM Post post " +
             "LEFT JOIN post.tags tag " +
@@ -51,7 +51,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "OR post.content LIKE %:searchRequest% " +
             "OR post.author LIKE %:searchRequest% " +
             "OR tag.name LIKE %:searchRequest%) " +
-            "AND (:emptyAuthors = 1 OR post.author IN :authors) " +
+            "AND (:emptyAuthors = 1 OR post.author IN :authorNames) " +
             "AND (:emptyTags = 1 OR EXISTS(SELECT tag FROM Tag tag WHERE tag.name IN :tagNames AND tag MEMBER OF post.tags)) " +
             "AND (:dates = 1 OR post.publishedAt BETWEEN :startDate AND :endDate) " +
             "AND post.isPublished = true")
@@ -59,7 +59,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                                     @Param("emptyAuthors") int emptyAuthors,
                                     @Param("emptyTags") int emptyTags,
                                     @Param("dates") int dates,
-                                    @Param("authors") List<String> authors,
+                                    @Param("authorNames") List<String> authorNames,
                                     @Param("tagNames") List<String> tagNames,
                                     @Param("startDate") LocalDateTime startDate,
                                     @Param("endDate") LocalDateTime endDate,
