@@ -51,6 +51,11 @@
             flex-direction : column;
             justify-content: flex-end;
         }
+        .previous-page {
+         display : flex;
+            flex-direction : column;
+            justify-content: flex-end;
+        }
 </style>
 </head>
 <body>
@@ -140,10 +145,6 @@
     </div>
 </div>
 
-<!--    <div class = "next-page">-->
-<!--        <a th:if="${currentPage < totalPages}" th:href="@{/page/{pageNumber}(pageNumber=${currentPage + 1})}" id="nextPageLink">Next Page</a>-->
-<!--        <a th:if="${currentPage > 1}" th:href="@{/page/{pageNumber}(pageNumber=${currentPage - 1})}" id="prevPageLink">Previous Page</a>-->
-<!--    </div>-->
 
 <div class="next-page">
     <button th:if="${currentPage < totalPages}">
@@ -160,27 +161,6 @@
         </a>
     </button>
 </div>
-
-
-
-
-
-<!--<div class="next-page">-->
-<!--    <button th:if="${currentPage < totalPages}">-->
-<!--        <a th:href="@{'/page/' + ${currentPage + 1} + buildFilterParams(selectedAuthors) + '&sortField=' + ${sortField} + '&sortDirection=' + ${sortDirection}}">-->
-<!--            Next Page-->
-<!--        </a>-->
-<!--    </button>-->
-<!--</div>-->
-
-<!--<div class="previous-page">-->
-<!--    <button th:if="${currentPage > 1}">-->
-<!--        <a th:href="@{'/page/' + ${currentPage - 1} + buildFilterParams(selectedAuthors) + '&sortField=' + ${sortField} + '&sortDirection=' + ${sortDirection}}">-->
-<!--            Previous Page-->
-<!--        </a>-->
-<!--    </button>-->
-<!--</div>-->
-
 
 </body>
 </html>

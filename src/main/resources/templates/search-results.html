@@ -22,6 +22,33 @@
             margin-top: 7rem;
             margin-left: -20rem;
         }
+          .box-container{
+
+        width : 80%;
+        margin-left : 1rem;
+        display : flex;
+        flex-wrap : wrap;
+
+        }
+        .post-box{
+        border : 1px solid black;
+        width : 22%;
+        height : 20%;
+        margin-right : 2rem;
+        margin-top: 2rem;
+        margin-left : 1rem;
+        text-align:center;
+        }
+        .next-page{
+            display : flex;
+            flex-direction : column;
+            justify-content: flex-end;
+        }
+        .previous-page {
+         display : flex;
+            flex-direction : column;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 <body>
@@ -87,40 +114,37 @@
     </form>
 
 
-    <table>
-        <tr>
-            <th>Title</th>
-            <th>Excerpt</th>
-            <th>Author</th>
-            <th>Published_At</th>
-            <th>Tags</th>
-        </tr>
-        <tr th:each="post : ${posts}">
-            <td><a th:href="@{'/post/' + ${post.id}}" th:text="${post.title}"></a></td>
-            <td th:text="${post.excerpt}"></td>
-            <td th:text="${post.author}"></td>
-            <td th:text="${#temporals.format(post.publishedAt, 'yyyy-MM-dd h:mma')}"></td>
-            <td>
-                <span th:each="tag, tagStat : ${post.tags}">
-                    <span th:text="${tag.name}"></span>
-                    <span th:if="${!tagStat.last}">, </span>
-                </span>
-            </td>
-        </tr>
-    </table>
+    <div class="box-container">
+        <div th:each="post : ${posts}" class="post-box">
+            <a th:href="@{'/post/' + ${post.id}}" class="post-title" th:text="${post.title}"></a>
+            <p class="post-excerpt" th:text="${post.excerpt}"></p>
+            <p class="post-author" th:text="${post.author}"></p>
+            <p class="post-publishedAt" th:text="${#temporals.format(post.publishedAt, 'yyyy-MM-dd h:mma')}"></p>
+            <p class="post-tags">
+            <span th:each="tag, tagStat : ${post.tags}">
+                <span class="tag" th:text="${tag.name}"></span>
+                <span th:if="${!tagStat.last}">, </span>
+            </span>
+            </p>
+        </div>
+    </div>
 </div>
 
 
-<div th:if="${currentPage < totalPages}">
+<div class="next-page">
+    <button th:if="${currentPage < totalPages}">
     <a th:href="@{/search/page/{pageNo}(pageNo=${currentPage + 1}, search=${search}, sortDirection=${sortDirection}, sortField=${sortField})}">
         Next Page
     </a>
+    </button>
 </div>
 
-<div th:if="${currentPage > 1}">
+<div class="previous-page">
+    <button th:if="${currentPage > 1}">
     <a th:href="@{/search/page/{pageNo}(pageNo=${currentPage - 1}, search=${search}, sortDirection=${sortDirection}, sortField=${sortField})}">
         Previous Page
     </a>
+    </button>
 </div>
 
 </body>
