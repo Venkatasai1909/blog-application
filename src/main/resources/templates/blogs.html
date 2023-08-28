@@ -47,14 +47,13 @@
         text-align:center;
         }
         .next-page{
-            display : flex;
-            flex-direction : column;
-            justify-content: flex-end;
+          display:flex;
+          justify-content:center;
+
         }
-        .previous-page {
-         display : flex;
-            flex-direction : column;
-            justify-content: flex-end;
+        .previous-page{
+            display:flex;
+            justify-content:center;
         }
 </style>
 </head>
@@ -161,7 +160,7 @@
      </button>
 </div>
 
-<div calss="previous-page" >
+<div class="previous-page">
      <button th:if="${currentPage > 1}">
         <a th:href="@{/page/{pageNo}(pageNo=${currentPage - 1}, sortDirection=${sortDirection}, sortField=${sortField}
         , selectedAuthors=${selectedAuthors}, selectedTags=${selectedTags},startDate=${startDate}, endDate=${endDate})}">
@@ -170,44 +169,6 @@
      </button>
 </div>
 
-<!--<div class="next-page">-->
-<!--    <button th:if="${currentPage < totalPages}">-->
-<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage + 1}, sortDirection=${sortDirection}, sortField=${sortField},-->
-<!--        selectedAuthors=${selectedAuthors}, ${selectedTags != null and selectedTags != '' ? ',selectedTags=' + selectedTags : ''},-->
-<!--        startDate=${startDate}, endDate=${endDate})}">-->
-<!--            Next Page-->
-<!--        </a>-->
-<!--    </button>-->
-<!--</div>-->
-
-<!--<div class="previous-page">-->
-<!--    <button th:if="${currentPage > 1}">-->
-<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage - 1}, sortDirection=${sortDirection}, sortField=${sortField},-->
-<!--        selectedAuthors=${selectedAuthors}, ${selectedTags != null and selectedTags != '' ? ',selectedTags=' + selectedTags : ''},-->
-<!--        startDate=${startDate}, endDate=${endDate})}">-->
-<!--            Previous Page-->
-<!--        </a>-->
-<!--    </button>-->
-<!--</div>-->
-
-
-<!--<div class="next-page" th:if="${currentPage < totalPages}">-->
-<!--    <button>-->
-<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage + 1}, sortDirection=${sortDirection}, sortField=${sortField}-->
-<!--        , selectedAuthors=${selectedAuthors}, ${selectedTags != null ? 'selectedTags=' + selectedTags : ''}, startDate=${startDate}, endDate=${endDate})}">-->
-<!--            Next Page-->
-<!--        </a>-->
-<!--    </button>-->
-<!--</div>-->
-
-<!--<div class="previous-page" th:if="${currentPage > 1}">-->
-<!--    <button>-->
-<!--        <a th:href="@{/page/{pageNo}(pageNo=${currentPage - 1}, sortDirection=${sortDirection}, sortField=${sortField}-->
-<!--        , selectedAuthors=${selectedAuthors}, ${selectedTags != null ? 'selectedTags=' + selectedTags : ''}, startDate=${startDate}, endDate=${endDate})}">-->
-<!--            Previous Page-->
-<!--        </a>-->
-<!--    </button>-->
-<!--</div>-->
 
 
 <script th:inline="javascript">

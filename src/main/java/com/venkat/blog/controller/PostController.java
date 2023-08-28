@@ -137,16 +137,6 @@ public class PostController {
     @PostMapping("/delete-post")
     public String deletePost(@RequestParam("postId") Integer postId) {
         boolean isPublished = postService.findById(postId).isPublished();
-        Post post = postService.findById(postId);
-
-        if(HomeController.authors.contains(post.getAuthor())) {
-            HomeController.authors.remove(post.getAuthor());
-        }
-
-        if(HomeController.uniqueAuthors.contains(post.getAuthor())) {
-            HomeController.uniqueAuthors.remove(post.getAuthor());
-        }
-
         postService.deleteById(postId);
 
         if(isPublished == false) {
