@@ -15,7 +15,8 @@ public interface PostService {
     Post findById(Integer id);
     void save(Post post);
     void deleteById(Integer id);
-    List<Post> findAllByDrafts();
+    List<Post> findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(String adminName);
+    List<Post> findAllByIsPublishedFalseAndAuthorOrderByPublishedAtDesc(String author);
     Page<Post> findAllPostsBySearchRequest(String search, Pageable pageable);
     Set<String> findAllAuthors();
     Set<String> findTagNamesWithPublishedPosts();
@@ -27,5 +28,8 @@ public interface PostService {
 
     Set<String> findDistinctAuthorsBySearchRequest(String searchRequest);
     Set<String> findDistinctTagsBySearchRequest(String searchRequest);
+    List<Post> findAllByIsPublishedTrueAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(String author);
+
+    List<Post> findAllByIsPublishedTrueAndAdminNameOrderByPublishedAtDesc(String adminName);
 
 }

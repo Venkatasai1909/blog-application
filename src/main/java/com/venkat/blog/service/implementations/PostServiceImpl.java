@@ -26,7 +26,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> findAll(Pageable pageable) {
-        return postRepository.findAllByPublished(pageable);
+        return postRepository.findAllByIsPublishedTrue(pageable);
     }
 
     @Override
@@ -45,9 +45,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAllByDrafts() {
-        return postRepository.findAllByDrafts();
+    public List<Post> findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(String adminName) {
+
+        return postRepository.findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(adminName);
     }
+
+    @Override
+    public List<Post> findAllByIsPublishedFalseAndAuthorOrderByPublishedAtDesc(String author) {
+
+        return postRepository.findAllByIsPublishedFalseAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(author);
+    }
+
 
     @Override
     public Page<Post> findAllPostsBySearchRequest(String search, Pageable pageable) {
@@ -56,7 +64,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Set<String> findAllAuthors() {
-        return postRepository.findAllDistinctAuthors();
+        return postRepository.findAllDistinctAuthorsFromPublishedPosts();
     }
 
     @Override
@@ -100,6 +108,15 @@ public class PostServiceImpl implements PostService {
         return postRepository.findDistinctTagsBySearchRequest(searchRequest);
     }
 
+    @Override
+    public List<Post> findAllByIsPublishedTrueAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(String author) {
+        return postRepository.findAllByIsPublishedTrueAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(author);
+    }
+
+    @Override
+    public List<Post> findAllByIsPublishedTrueAndAdminNameOrderByPublishedAtDesc(String adminName) {
+        return postRepository.findAllByIsPublishedTrueAndAdminNameOrderByPublishedAtDesc(adminName);
+    }
 
 
 }

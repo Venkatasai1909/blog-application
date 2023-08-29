@@ -3,6 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        form {
+        width: 300px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        background-color: #f8f8f8;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Error message */
+        .error-message {
+        color: #d9534f; /* Bootstrap's danger color */
+        font-size: 14px;
+        margin-top: 5px;
+        }
+
+        /* Input fields */
+        input[type="text"],
+        input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        }
+
+        /* Submit button */
+        input[type="submit"] {
+        background-color: #007bff; /* Bootstrap's primary color */
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+
+        /* Register link */
+        .register-link {
+        margin-top: 10px;
+        text-align: center;
+        }
+
+        /* Styling for link */
+        a {
+        color: #007bff;
+        text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 <form action="#" th:action="@{/authenticateTheUser}" method="POST">

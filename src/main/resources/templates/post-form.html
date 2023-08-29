@@ -25,10 +25,10 @@
         Title: <input type="text" th:field="*{title}">
         Content: <textarea th:field="*{content}" rows="10" cols="50"></textarea>
         <div th:if="${post.author == null}">
-            Author: <input type="text" value="" th:name="author">
+            Author: <input type="text" value="" th:field="*{author}" th:name="author">
         </div>
         <div th:unless="${post.author == null}">
-            Author: <input type="text" th:value="${post.author}" readonly="readonly">
+            Author: <input type="text" th:field="*{author}" th:value="${post.author}" readonly="readonly">
         </div>
         Published DateTime: <input type="text" th:field="*{publishedAt}" readonly>
         <input type="hidden" th:field="*{id}">

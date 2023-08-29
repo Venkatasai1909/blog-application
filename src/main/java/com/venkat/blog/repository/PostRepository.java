@@ -13,13 +13,21 @@ import java.util.List;
 import java.util.Set;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
+    Page<Post> findAllByIsPublishedTrue(Pageable pageable);
 
-    @Query("SELECT post FROM Post post WHERE isPublished = true")
-    Page<Post> findAllByPublished(Pageable pageable);
+    List<Post> findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(String adminName);
 
+    List<Post> findAllByIsPublishedFalseAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(String author);
 
-    @Query("SELECT post FROM Post post WHERE isPublished = false ORDER BY publishedAt DESC")
-    List<Post> findAllByDrafts();
+    List<Post> findAllByIsPublishedTrueAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(String author);
+
+    List<Post> findAllByIsPublishedTrueAndAdminNameOrderByPublishedAtDesc(String adminName);
+
+    @Query("SELECT DISTINCT p.author FROM Post p WHERE p.isPublished = true")
+    Set<String> findAllDistinctAuthorsFromPublishedPosts();
+
+    @Query("SELECT DISTINCT t.name FROM Tag t JOIN t.posts p WHERE p.isPublished = true")
+    Set<String> findTagsWithPublishedPosts();
 
     @Query("SELECT DISTINCT post FROM Post post " +
             "LEFT JOIN post.tags tag " +
@@ -30,13 +38,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "AND post.isPublished=true")
     Page<Post> findAllPostsBySearchRequest(@Param("searchRequest") String searchRequest, Pageable pageable);
 
-
-    @Query("SELECT DISTINCT author from Post WHERE isPublished=true")
-    Set<String> findAllDistinctAuthors();
-
-    @Query("SELECT DISTINCT t.name FROM Tag t JOIN t.posts p WHERE p.isPublished = true")
-    Set<String> findTagsWithPublishedPosts();
-
     @Query("SELECT post FROM Post post WHERE post.isPublished = true " +
             "AND (:emptyAuthors = 1 OR post.author IN :authorNames)" +
             "AND (:emptyTags = 1 OR EXISTS(SELECT postTag FROM Post postTag JOIN postTag.tags tag WHERE postTag = post AND tag.name IN :tagNames))" +
@@ -45,7 +46,6 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
                            @Param("emptyDates") int emptyDates, @Param("authorNames") Set<String> authorNames,
                            @Param("tagNames") Set<String> tagNames, @Param("startDate") LocalDateTime startDate,
                            @Param("endDate") LocalDateTime endDate, Pageable pageable);
-
 
     @Query("SELECT DISTINCT post FROM Post post " +
             "LEFT JOIN post.tags tag " +

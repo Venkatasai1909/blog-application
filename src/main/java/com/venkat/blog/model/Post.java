@@ -29,6 +29,17 @@ public class Post {
     private LocalDateTime createdAt ;
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
+    @Column(name="admin_Name")
+    private String adminName;
+
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
+    }
+
     @OneToMany(targetEntity = Comment.class, cascade = CascadeType.ALL, mappedBy = "post")
     private Set<Comment> comments;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})

@@ -20,10 +20,10 @@
 <div class="container">
     <form th:action="@{/save-comment}" th:object="${comment}" method="POST">
         <label for="name">Name:</label>
-        <input type="text" id="name" th:field="*{name}">
+        <input type="text" id="name" th:field="*{name}" readonly>
 
         <label for="email">Email:</label>
-        <input type="email" id="email" th:field="*{email}">
+        <input type="email" id="email" th:field="*{email}" readonly>
 
         <label for="content">Comment:</label>
         <input type="text" id="content" th:field="*{content}">

@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,10 +56,17 @@ public class PostController {
     @PostMapping("/save-post")
     public String savePost(@ModelAttribute("post") Post modelPost, @RequestParam("tagSet") String requestTags,
                            @RequestParam(value = "action") String action, Model model) {
-        if(userService.findByName(modelPost.getAuthor()) == null) {
-            model.addAttribute("error", "User doesn't exists...");
 
-            return "post-form";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        if(isAdmin) {
+            modelPost.setAdminName(authentication.getName());
+            if(userService.findByName(modelPost.getAuthor()) == null) {
+                model.addAttribute("error", "User doesn't exists...");
+
+                return "post-form";
+            }
         }
 
         if(modelPost.getCreatedAt() == null) {
@@ -169,7 +177,18 @@ public class PostController {
 
     @GetMapping("/drafts")
     public String  drafts(Model model) {
-        List<Post> posts = postService.findAllByDrafts();
+        List<Post> posts = new ArrayList<>();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        boolean isAuthor = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_AUTHOR"));
+
+        if(isAdmin) {
+            posts = postService.findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(username);
+        } else if(isAuthor){
+            posts = postService.findAllByIsPublishedFalseAndAuthorOrderByPublishedAtDesc(username);
+        }
 
         model.addAttribute("posts", posts);
 
@@ -185,6 +204,25 @@ public class PostController {
         postService.save(post);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/my-posts")
+    public String myPosts(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        boolean isAuthor = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_AUTHOR"));
+        List<Post> posts = new ArrayList<>();
+
+        if(isAdmin) {
+            posts = postService.findAllByIsPublishedTrueAndAdminNameOrderByPublishedAtDesc(username);
+        } else {
+            posts = postService.findAllByIsPublishedTrueAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(username);
+        }
+
+        model.addAttribute("posts", posts);
+
+        return "my-posts";
     }
 
 }

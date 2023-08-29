@@ -58,7 +58,6 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers("/new-post", "/drafts").authenticated()
                                 .requestMatchers(HttpMethod.POST, "/update-comment", "/delete-comment").hasRole("AUTHOR")
-//                                .requestMatchers(HttpMethod.POST, "/register-user").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/save-post", "/update-post", "/delete-post", "/publish").hasAnyRole("AUTHOR", "ADMIN")
                                 .anyRequest().permitAll()
                 )

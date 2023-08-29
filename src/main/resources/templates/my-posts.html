@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Post</title>
+    <style>
+        .box-container{
+
+        width : 80%;
+        margin-left : 1rem;
+        display : flex;
+        flex-wrap : wrap;
+
+        }
+        .post-box{
+        border : 1px solid black;
+        width : 22%;
+        height : 20%;
+        margin-right : 2rem;
+        margin-top: 2rem;
+        margin-left : 1rem;
+        text-align:center;
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/}">Home </a>
+<div class="box-container">
+    <div th:each="post : ${posts}" class="post-box">
+        <a th:href="@{'/post/' + ${post.id}}" class="post-title" th:text="${post.title}"></a>
+        <p class="post-excerpt" th:text="${post.excerpt}"></p>
+        <p class="post-author" th:text="${post.author}"></p>
+        <p class="post-publishedAt" th:text="${#temporals.format(post.publishedAt, 'yyyy-MM-dd h:mma')}"></p>
+        <p class="post-tags">
+            <span th:each="tag, tagStat : ${post.tags}">
+                <span class="tag" th:text="${tag.name}"></span>
+                <span th:if="${!tagStat.last}">, </span>
+            </span>
+        </p>
+    </div>
+</div>
+</body>
+</html>
