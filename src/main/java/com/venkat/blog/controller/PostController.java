@@ -6,7 +6,11 @@ import com.venkat.blog.model.Tag;
 import com.venkat.blog.service.CommentService;
 import com.venkat.blog.service.PostService;
 import com.venkat.blog.service.TagService;
+import com.venkat.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,23 +19,34 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Controller
 public class PostController {
     PostService postService;
     CommentService commentService;
     TagService tagService;
+    UserService userService;
     @Autowired
-    public PostController(PostService postService, CommentService commentService, TagService tagService) {
+    public PostController(PostService postService, CommentService commentService, TagService tagService,
+                          UserService userService) {
         this.postService = postService;
         this.commentService = commentService;
         this.tagService = tagService;
+        this.userService = userService;
     }
 
     @GetMapping("/new-post")
     public String addPost(Model model) {
         Post post = new Post();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAuthor = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_AUTHOR"));
+
+        if (isAuthor) {
+            String username = authentication.getName();
+            post.setAuthor(username);
+        }
+
         model.addAttribute("post", post);
 
         return "post-form";
@@ -39,7 +54,13 @@ public class PostController {
 
     @PostMapping("/save-post")
     public String savePost(@ModelAttribute("post") Post modelPost, @RequestParam("tagSet") String requestTags,
-                           @RequestParam(value = "action") String action) {
+                           @RequestParam(value = "action") String action, Model model) {
+        if(userService.findByName(modelPost.getAuthor()) == null) {
+            model.addAttribute("error", "User doesn't exists...");
+
+            return "post-form";
+        }
+
         if(modelPost.getCreatedAt() == null) {
             modelPost.setCreatedAt(LocalDateTime.now());
         }
@@ -69,6 +90,7 @@ public class PostController {
 
         if(action.equals("Publish")) {
             modelPost.setPublished(true);
+            modelPost.setPublishedAt(LocalDateTime.now());
         }
 
         if(action.equals("Update")) {
@@ -109,7 +131,6 @@ public class PostController {
         return "post-page";
 
     }
-
     @PostMapping("/update-post")
     public String updatePost(@RequestParam("postId") Integer postId, Model model) {
         Post post = postService.findById(postId);

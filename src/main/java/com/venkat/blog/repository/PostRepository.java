@@ -30,6 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "AND post.isPublished=true")
     Page<Post> findAllPostsBySearchRequest(@Param("searchRequest") String searchRequest, Pageable pageable);
 
+
     @Query("SELECT DISTINCT author from Post WHERE isPublished=true")
     Set<String> findAllDistinctAuthors();
 
@@ -48,10 +49,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT DISTINCT post FROM Post post " +
             "LEFT JOIN post.tags tag " +
-            "WHERE (post.title LIKE %:searchRequest% " +
-            "OR post.content LIKE %:searchRequest% " +
-            "OR post.author LIKE %:searchRequest% " +
-            "OR tag.name LIKE %:searchRequest%) " +
+            "WHERE (post.title iLIKE %:searchRequest% " +
+            "OR post.content iLIKE %:searchRequest% " +
+            "OR post.author iLIKE %:searchRequest% " +
+            "OR tag.name iLIKE %:searchRequest%) " +
             "AND (:emptyAuthors = 1 OR post.author IN :authorNames) " +
             "AND (:emptyTags = 1 OR EXISTS(SELECT postTag FROM Post postTag JOIN postTag.tags tag WHERE postTag = post AND tag.name IN :tagNames))" +
             "AND (:dates = 1 OR post.publishedAt BETWEEN :startDate AND :endDate) " +
@@ -80,6 +81,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
             "OR post.author LIKE %:searchRequest%) " +
             "AND post.isPublished=true")
     Set<String> findDistinctTagsBySearchRequest(@Param("searchRequest") String searchRequest);
-
 
 }

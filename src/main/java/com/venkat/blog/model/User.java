@@ -15,6 +15,16 @@ public class User {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
+    @Column(name="roles", nullable = false)
+    private String roles = "ROLE_AUTHOR";
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
 
     public Integer getId() {
         return id;

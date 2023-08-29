@@ -92,7 +92,7 @@ public class HomeController {
     static Set<String> uniqueTags = new HashSet<>();
     @GetMapping("/search/page/{pageNo}")
     public String searchBlogs(@PathVariable Integer pageNo,
-                              @RequestParam("search") String search,
+                              @RequestParam("search") String searchRequest,
                               @RequestParam(value = "sortDirection", defaultValue = "desc") String sortDirection,
                               @RequestParam(value = "sortField", defaultValue = "publishedAt") String sortField,
                               @RequestParam(value = "selectedAuthors", required = false) Set<String> selectedAuthors,
@@ -108,25 +108,27 @@ public class HomeController {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
         Page<Post> posts = null;
+        searchRequest = searchRequest.trim();
+
         if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
                 || startDate != null || endDate != null) {
-            posts = posts = postService.filterAndSearchPosts(search, selectedAuthors, selectedTags,
+            posts = posts = postService.filterAndSearchPosts(searchRequest, selectedAuthors, selectedTags,
                                                               startDate, endDate, pageable);
         } else {
-            posts = postService.findAllPostsBySearchRequest(search, pageable);
+            posts = postService.findAllPostsBySearchRequest(searchRequest, pageable);
         }
 
         if(pageNo == 1) {
             uniqueTags.clear();
             uniqueAuthors.clear();
 
-            uniqueTags.addAll(postService.findDistinctTagsBySearchRequest(search));
-            uniqueAuthors.addAll(postService.findDistinctAuthorsBySearchRequest(search));
+            uniqueTags.addAll(postService.findDistinctTagsBySearchRequest(searchRequest));
+            uniqueAuthors.addAll(postService.findDistinctAuthorsBySearchRequest(searchRequest));
         }
 
         model.addAttribute("posts", posts.getContent());
         model.addAttribute("totalPages", posts.getTotalPages());
-        model.addAttribute("search", search);
+        model.addAttribute("search", searchRequest);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
         model.addAttribute("authors", uniqueAuthors);

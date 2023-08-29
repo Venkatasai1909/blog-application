@@ -4,16 +4,32 @@ import com.venkat.blog.model.User;
 import com.venkat.blog.repository.UserRepository;
 import com.venkat.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
     UserRepository userRepository;
+     PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
+
+
+//    @Override
+//    public void save(User user) {
+//        String bcryptPassword = passwordEncoder.encode(user.getPassword());
+//        user.setPassword(bcryptPassword);
+//
+//        userRepository.save(user);
+//
+//    }
 
     @Override
     public List<User> findAll() {
@@ -21,17 +37,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(Integer id) {
-        return null;
-    }
+    public User findByName(String name) {
 
-    @Override
-    public void save(User user) {
-
+        return userRepository.findByName(name);
     }
 
     @Override
     public void deleteById(Integer id) {
 
     }
+
+    @Override
+    public void registerUser(User user) {
+        String bcryptPassword = passwordEncoder.encode(user.getPassword());
+
+        user.setPassword(bcryptPassword);
+        userRepository.save(user);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+
+        return userRepository.findByEmail(email);
+    }
+
 }

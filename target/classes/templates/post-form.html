@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Post Page</title>
@@ -20,22 +20,26 @@
     </style>
 </head>
 <body>
-
-<a th:href="@{/}">Home </a>
-<form th:action="@{/save-post}" th:object="${post}" method="POST">
-    Title: <input type="text" th:field="*{title}">
-    Content: <textarea th:field="*{content}" rows="10" cols="50"></textarea>
-    Author: <input type="text" th:field="*{author}">
-    Published DateTime: <input type="text" th:field="*{publishedAt}" readonly>
-    <input type="hidden" th:field="*{id}">
-    Tags: <input type="text"  th:value="${postTags}" name="tagSet">
-    <input type="submit" name="action" value="Draft" th:if="${post.id == null}">
-    <input type="submit" name="action" value="Publish" th:if="${post.id == null}">
-    <input type="submit" name="action" value="Update" th:if="${post.id != null && post.isPublished == true}">
-    <input type="submit" name="action" value="Update Draft" th:if="${post.id != null && post.isPublished == false}">
-    <a th:if="${post.id != null && post.isPublished == true}" th:href="@{'/post/' + ${post.id}}">Cancel</a>
-    <a th:if="${post.id != null && post.isPublished == false}" th:href="@{/drafts}">Cancel</a>
-</form>
-
+    <a th:href="@{/}">Home </a>
+    <form th:action="@{/save-post}" th:object="${post}" method="POST">
+        Title: <input type="text" th:field="*{title}">
+        Content: <textarea th:field="*{content}" rows="10" cols="50"></textarea>
+        <div th:if="${post.author == null}">
+            Author: <input type="text" value="" th:name="author">
+        </div>
+        <div th:unless="${post.author == null}">
+            Author: <input type="text" th:value="${post.author}" readonly="readonly">
+        </div>
+        Published DateTime: <input type="text" th:field="*{publishedAt}" readonly>
+        <input type="hidden" th:field="*{id}">
+        Tags: <input type="text"  th:value="${postTags}" name="tagSet">
+        <input type="submit" name="action" value="Draft" th:if="${post.id == null}">
+        <input type="submit" name="action" value="Publish" th:if="${post.id == null}">
+        <input type="submit" name="action" value="Update" th:if="${post.id != null && post.isPublished == true}">
+        <input type="submit" name="action" value="Update Draft" th:if="${post.id != null && post.isPublished == false}">
+        <a th:if="${post.id != null && post.isPublished == true}" th:href="@{'/post/' + ${post.id}}">Cancel</a>
+        <a th:if="${post.id != null && post.isPublished == false}" th:href="@{/drafts}">Cancel</a>
+        <span th:text="${error}"></span>
+    </form>
 </body>
 </html>

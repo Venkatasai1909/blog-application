@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+      <h2>Create Account</h2>
+      <form th:action="@{/register-user}" th:object="${user}" method="POST">
+            User Name : <input type="text" th:field="*{name}" name="name">
+            Email : <input type="email"  th:field="*{email}" name="email">
+            Password : <input type="password"  th:field="*{password}" id="password">
+            Confirm Password : <input type="password" id="confirm_password">
+            <input type="submit" value="Register">
+            <span id="text-content"></span><br>
+            <span>Have a Account</span><a th:href="@{/login}">Login</a>
+            <span th:text="${error}"></span>
+      </form>
+</body>
+
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const password = document.getElementById("password");
+        const confirm_password = document.getElementById("confirm_password");
+        const text_content = document.getElementById("text-content");
+
+        document.querySelector("form").addEventListener("submit", function(event) {
+            if (password.value.trim() !== confirm_password.value.trim()) {
+                text_content.textContent = "Password Mismatch";
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+
+        confirm_password.addEventListener("blur", function() {
+            if (password.value.trim() !== confirm_password.value.trim()) {
+                text_content.textContent = "Password Mismatch";
+            } else {
+                text_content.textContent = ""; // Clear the message
+            }
+        });
+    });
+</script>
+
+</html>
