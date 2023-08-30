@@ -28,8 +28,9 @@ public class UserController {
 
             return "register";
         }
-        System.out.println(user.getName());
+
         if(!user.getPassword().equals(password)) {
+            System.out.println("In password page");
 
             return "register";
         }
