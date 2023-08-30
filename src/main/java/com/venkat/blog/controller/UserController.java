@@ -30,7 +30,7 @@ public class UserController {
         }
 
         if(!user.getPassword().equals(password)) {
-            System.out.println("In password page");
+            model.addAttribute("error", "Password Mismatch...");
 
             return "register";
         }

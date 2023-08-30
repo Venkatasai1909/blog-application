@@ -4,21 +4,76 @@
     <meta charset="UTF-8">
     <title>Post Page</title>
     <style>
-        form{
-            display : flex;
-            flex-direction : column;
-            gap: 10px;
-            width: 25%;
-            margin-top: 1.5rem;
-        }
+        /* Apply styles to the login form container */
+.loginForm {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        form textarea{
-        resize: vertical;
-        }
+/* Apply styles to form elements */
+.loginForm form {
+    display: grid;
+    grid-gap: 10px;
+}
+
+.loginForm input[type="text"],
+.loginForm textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.loginForm input[type="hidden"] {
+    display: none;
+}
+
+.loginForm input[type="submit"],
+.loginForm a {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.loginForm input[type="submit"]:hover,
+.loginForm a:hover {
+    background-color: #0056b3;
+}
+
+/* Apply styles to the tags input */
+.loginForm input[type="text"][name="tagSet"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Apply styles to the error message */
+.loginForm span {
+    color: #d9534f;
+}
+
+/* Apply styles to the readonly author input */
+.loginForm input[type="text"][readonly] {
+    background-color: #f7f7f7;
+    border: none;
+}
+
     </style>
 </head>
 <body>
+<div class="loginForm">
     <a th:href="@{/}">Home </a>
+    <br><br><br>
     <form th:action="@{/save-post}" th:object="${post}" method="POST">
         Title: <input type="text" th:field="*{title}" required>
         Content: <textarea th:field="*{content}" rows="10" cols="50" required></textarea>
@@ -39,5 +94,6 @@
         <a th:if="${post.id != null && post.isPublished == false}" th:href="@{/drafts}">Cancel</a>
         <span th:text="${error}"></span>
     </form>
+</div>
 </body>
 </html>
