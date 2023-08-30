@@ -4,160 +4,143 @@
     <meta charset="UTF-8">
     <title>Blogs</title>
     <style>
-    .container {
-        display:grid;
-        grid-template-column:1fr 2fr;
-    }
-
-      /* Style for the container */
-.container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-
-/* Style for the left section containing filters and buttons */
-.filter-container {
-    flex: 0 0 25%;
-    padding: 20px;
-    border-right: 1px solid #ccc;
-    background-color: #f7f7f7;
-    grid-column:1/3;
-}
-
-.filter-section {
-    margin-bottom: 15px;
-}
-
-/* Style for the buttons section */
-.buttons {
-    margin-top: 20px;
-}
-
-/* Style for the form inputs and labels */
-.filter-container input[type="checkbox"],
-.filter-container input[type="datetime-local"] {
-    margin-right: 5px;
-}
-
-/* Style for the reset and apply filters buttons */
-.filter-container input[type="reset"],
-.filter-container input[type="submit"] {
-    padding: 8px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 10px;
-}
-
-/* Style for the right section containing posts */
-.box-container {
-    flex: 0 0 70%;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-    grid-column:4/7;
-}
-
-.post-box {
-    flex: 0 0 calc(33.33% - 20px);
-    border: 1px solid #ccc;
-    padding: 15px;
-    background-color: #fff;
-    box-sizing: border-box;
-}
-
-/* Style for the post title */
-.post-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #007bff;
-    text-decoration: none;
-    margin-bottom: 10px;
-}
-
-/* Style for the post excerpt, author, published date, and tags */
-.post-excerpt,
-.post-author,
-.post-publishedAt,
-.post-tags {
-    margin-bottom: 10px;
-}
-
-.tag {
-    background-color: #007bff;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin-right: 5px;
-}
-
-/* Style for the navigation buttons */
-.next-page,
-.previous-page {
-    margin-top: 20px;
-}
-
-.next-page button,
-.previous-page button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 15px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.next-page button a,
-.previous-page button a {
-    color: #fff;
-    text-decoration: none;
-}
-
-/* Clearfix for the floated elements */
-.clearfix::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-
+        .container {
+            display:grid;
+            grid-template-column:1fr 2fr;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .filter-container {
+            flex: 0 0 25%;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            background-color: #f7f7f7;
+            grid-column:1/3;
+        }
+        .filter-section {
+            margin-bottom: 15px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .filter-container input[type="checkbox"],
+        .filter-container input[type="datetime-local"] {
+            margin-right: 5px;
+        }
+        .filter-container input[type="reset"],
+        .filter-container input[type="submit"] {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .box-container {
+            flex: 0 0 70%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            grid-column:4/7;
+            line-height:2;
+        }
+        .post-box {
+            flex: 0 0 calc(33.33% - 20px);
+            border: 1px solid #ccc;
+            padding: 15px;
+            background-color: #fff;
+            box-sizing: border-box;
+        }
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+        .post-excerpt,
+        .post-author,
+        .post-publishedAt,
+        .post-tags {
+            margin-bottom: 10px;
+        }
+        .tag {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            width:fit-content;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        .next-page,
+        .previous-page {
+            margin-top: 20px;
+        }
+        .next-page button,
+        .previous-page button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .next-page button a,
+        .previous-page button a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .buttons-container {
+            background-color: #007bff;
+            border:0 solid ;
+            padding:10px;
+            display:flex;
+        }
+        .buttons-container a {
+            text-decoration:none;
+            color:white;
+        }
+        .button {
+            display:flex;
+            justify-content:space-around;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div sec:authorize="isAuthenticated()">
-        <h2>Welcome   <span sec:authentication="principal.username"></span> </h2>
-    </div>
 
-    <div sec:authorize="isAuthenticated()">
-        <a class="add-button" th:href="@{/new-post}">
+<div sec:authorize="isAuthenticated()">
+    <h2>Welcome   <span sec:authentication="principal.username"></span> </h2>
+</div>
+
+<div class="button">
+    <div sec:authorize="isAuthenticated()" >
+       <button class="buttons-container"> <a class="add-button" th:href="@{/new-post}">
             Add Post
-        </a>
+       </a></button>
     </div>
 
-    <div sec:authorize="isAuthenticated()">
+    <div sec:authorize="isAuthenticated()" >
         <form th:action="@{/my-posts}" method="GET">
-            <input type="submit" value="My Posts">
+            <button class="buttons-container"> <input type="submit" value="My Posts"></button>
         </form>
     </div>
 
-    <div sec:authorize="isAuthenticated()">
+    <div sec:authorize="isAuthenticated()" >
         <form th:action="@{/drafts}" method="GET">
-            <input type="submit" value="My Drafts">
+            <button class="buttons-container"> <input type="submit" value="My Drafts"></button>
         </form>
     </div>
-    <div sec:authorize="!isAuthenticated()">
-        <a th:href="@{/login}">Login</a>
+    <div sec:authorize="!isAuthenticated()" >
+        <button class="buttons-container"> <a th:href="@{/login}">Login</a></button>
     </div>
 
-    <div sec:authorize="isAuthenticated()">
+    <div sec:authorize="isAuthenticated()" >
         <form th:action="@{/logout}" method="POST">
-            <input type="submit" value="Logout">
+            <button class="buttons-container"><input type="submit" value="Logout"></button>
         </form>
     </div>
 </div>
@@ -224,6 +207,7 @@
                 <input type="submit" value="Apply Filters">
             </div>
         </form>
+    </div>
 
         <div class="box-container">
             <div th:each="post : ${posts}" class="post-box">
@@ -239,7 +223,7 @@
                 </p>
             </div>
         </div>
-    </div>
+</div>
 
 
     <div class = "next-page">
