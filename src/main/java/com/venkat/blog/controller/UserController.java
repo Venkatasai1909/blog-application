@@ -28,8 +28,8 @@ public class UserController {
 
             return "register";
         }
-
-        if(user.getPassword().equals(password)) {
+        System.out.println(user.getName());
+        if(!user.getPassword().equals(password)) {
 
             return "register";
         }
