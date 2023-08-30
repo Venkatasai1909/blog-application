@@ -23,7 +23,6 @@ public class PostServiceImpl implements PostService {
         this.tagRepository = tagRepository;
     }
 
-
     @Override
     public Page<Post> findAll(Pageable pageable) {
         return postRepository.findAllByIsPublishedTrue(pageable);
@@ -46,13 +45,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(String adminName) {
-
         return postRepository.findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(adminName);
     }
 
     @Override
     public List<Post> findAllByIsPublishedFalseAndAuthorOrderByPublishedAtDesc(String author) {
-
         return postRepository.findAllByIsPublishedFalseAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(author);
     }
 
@@ -98,13 +95,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Set<String> findDistinctAuthorsBySearchRequest(String searchRequest) {
-
         return postRepository.findDistinctAuthorsBySearchRequest(searchRequest);
     }
 
     @Override
     public Set<String> findDistinctTagsBySearchRequest(String searchRequest) {
-
         return postRepository.findDistinctTagsBySearchRequest(searchRequest);
     }
 

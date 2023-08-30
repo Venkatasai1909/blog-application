@@ -73,46 +73,66 @@
             cursor: pointer;
         }
 
-        .addPost {
-            margin-top: 20px;
-        }
+
+        .add-button {
+        display: inline-block;
+        padding: 8px 15px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+.add-button:hover {
+    background-color: #0056b3;
+}
 
         form {
             display: inline-block;
             margin-right: 10px;
         }
+        .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
 </style>
 </head>
 <body>
-<div sec:authorize="isAuthenticated()">
-    <h2>Welcome   <span sec:authentication="principal.username"></span> <span sec:authentication="principal.authorities"></span></h2>
-</div>
-<div class="addPost" sec:authorize="isAuthenticated()">
-    <a th:href="@{/new-post}">
-        Add Post
-    </a>
-</div>
+<div class="container">
+    <div sec:authorize="isAuthenticated()">
+        <h2>Welcome   <span sec:authentication="principal.username"></span> </h2>
+    </div>
 
-<div sec:authorize="!isAuthenticated()">
-    <a th:href="@{/login}">Login</a>
-</div>
+    <div sec:authorize="isAuthenticated()">
+        <a class="add-button" th:href="@{/new-post}">
+            Add Post
+        </a>
+    </div>
 
-<div sec:authorize="isAuthenticated()">
-    <form th:action="@{/logout}" method="POST">
-        <input type="submit" value="Logout">
-    </form>
-</div>
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/my-posts}" method="GET">
+            <input type="submit" value="My Posts">
+        </form>
+    </div>
 
-<div sec:authorize="isAuthenticated()">
-    <form th:action="@{/my-posts}" method="GET">
-        <input type="submit" value="My Posts">
-    </form>
-</div>
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/drafts}" method="GET">
+            <input type="submit" value="My Drafts">
+        </form>
+    </div>
+    <div sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}">Login</a>
+    </div>
 
-<div sec:authorize="isAuthenticated()">
-    <form th:action="@{/drafts}" method="GET">
-        <input type="submit" value="My Drafts">
-    </form>
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/logout}" method="POST">
+            <input type="submit" value="Logout">
+        </form>
+    </div>
 </div>
 
     <form th:action="@{'/page/' + 1}" method="get" id="searchForm">
@@ -213,8 +233,6 @@
      </button>
 </div>
 
-
-
 <script th:inline="javascript">
     document.getElementById("resetButton").addEventListener("click", function(event) {
     event.preventDefault();
@@ -222,7 +240,7 @@
         checkboxes.forEach(function(checkbox) {
             checkbox.checked = false;
         });
-        window.location.href="http://localhost:8080/blog_application";
+        window.location.href="http://localhost:8080/blog_application/";
     });
 
 </script>

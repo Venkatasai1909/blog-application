@@ -21,11 +21,15 @@ public class UserController {
     }
 
     @PostMapping("/register-user")
-    public String registerUser(@ModelAttribute("user") User user, Model model) {
+    public String registerUser(@ModelAttribute("user") User user,
+                               @RequestParam("confirm_password") String password,Model model) {
         if(userService.findByName(user.getName()) != null  || userService.findByEmail(user.getEmail()) != null) {
-            User newUser = new User();
-            model.addAttribute("user", newUser);
             model.addAttribute("error", "User already exists...");
+
+            return "register";
+        }
+
+        if(user.getPassword().equals(password)) {
 
             return "register";
         }

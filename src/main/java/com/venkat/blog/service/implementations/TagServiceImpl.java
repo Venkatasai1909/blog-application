@@ -22,23 +22,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<Tag> findAll() {
-        return tagRepository.findAll();
-    }
-
-    @Override
-    public Tag findById(Integer id) {
-        return tagRepository.findById(id).get();
-    }
-
-    @Override
     public void save(Tag tag) {
         tagRepository.save(tag);
-    }
-
-    @Override
-    public void deleteById(Integer id) {
-        tagRepository.deleteById(id);
     }
 
     @Override
@@ -52,6 +37,5 @@ public class TagServiceImpl implements TagService {
 
       return tag;
     }
-
 
 }

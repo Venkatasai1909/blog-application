@@ -36,10 +36,15 @@
         <span th:text="${tag.name}"></span>
         <span th:if="${!tagStat.last}">, </span>
     </span>
+    <hr><br>
+    <div th:if="${post.adminName != null}">
+            <h3 th:text="${adminCreated}"></h3>
+        <hr>
+    </div>
 
-    <hr>
   <div sec:authorize="isAuthenticated()">
-      <div th:if="${post.author == #authentication.principal.username or #authorization.expression('hasRole(''ADMIN'')')}">
+      <div th:if="${(post.author == #authentication.principal.username and post.adminName == null) or
+       #authorization.expression('hasRole(''ADMIN'')')}">
         <form th:action="@{/update-post}" method="POST">
             <input type="hidden" name="postId" th:value="${post.id}">
                     <input class="submit-button" type="submit" value="Update Post">
@@ -70,7 +75,7 @@
             <p><strong>Email:</strong> <span th:text="${comment.email}"></span></p>
             <p><strong>Comment :</strong> <span th:text="${comment.content}"></span></p>
                 <div sec:authorize="isAuthenticated()">
-                    <div th:if="${post.author == #authentication.principal.username}">
+                    <div th:if="${(post.author == #authentication.principal.username and post.adminName == null)}">
                         <form th:action="@{/update-comment}" method="POST">
                             <input type="hidden" name="commentId" th:value="${comment.id}">
                             <input type="hidden" name="createdAt" th:value="${comment.createdAt}">
@@ -82,8 +87,8 @@
                             <input type="hidden" name="postId" th:value="${post.id}">
                             <input class="submit-button" type="submit" value="Delete">
                         </form>
-             </div>
-            </div>
+                    </div>
+                </div>
         </li>
     </ul>
 

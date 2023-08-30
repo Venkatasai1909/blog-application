@@ -6,7 +6,6 @@ import com.venkat.blog.model.Tag;
 import java.util.List;
 
 public interface CommentService {
-    List<Comment> findAll();
     Comment findById(Integer id);
     void save(Comment comment);
     void deleteById(Integer id);

@@ -56,7 +56,6 @@ public class PostController {
     @PostMapping("/save-post")
     public String savePost(@ModelAttribute("post") Post modelPost, @RequestParam("tagSet") String requestTags,
                            @RequestParam(value = "action") String action, Model model) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
@@ -75,7 +74,12 @@ public class PostController {
 
         String[] tagArray = requestTags.split(",");
         Set<Tag> tagSet = new HashSet<>();
-        modelPost.setExcerpt(modelPost.getContent().substring(0, 20));
+        if(modelPost.getContent().contains(".")) {
+            int fullStopIndex = modelPost.getContent().indexOf('.');
+            modelPost.setExcerpt(modelPost.getContent().substring(0, fullStopIndex+1));
+        } else {
+            modelPost.setExcerpt(modelPost.getContent());
+        }
 
         for (String tagName : tagArray) {
             tagName = tagName.trim();
@@ -128,6 +132,9 @@ public class PostController {
         Integer postId = id.intValue();
         List<Comment> comments = commentService.findAllBYPostId(postId);
         Post post = postService.findById(postId);
+        if(post.getAdminName() != null) {
+            model.addAttribute("adminCreated", "Admin created post...");
+        }
 
         Comment comment = new Comment();
         comment.setCreatedAt(LocalDateTime.now());

@@ -1,10 +1,7 @@
 package com.venkat.blog.controller;
 
 import com.venkat.blog.model.Post;
-import com.venkat.blog.model.Tag;
 import com.venkat.blog.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +33,8 @@ public class HomeController {
 
      static Set<String> authors = new HashSet<>();
      static Set<String> tags = new HashSet<>();
+    static Set<String> uniqueAuthors = new HashSet<>();
+    static Set<String> uniqueTags = new HashSet<>();
     @GetMapping("/page/{pageNo}")
     public String getListOfBlogs(@PathVariable Integer pageNo, @RequestParam(defaultValue = "publishedAt") String sortField,
                                  @RequestParam(defaultValue = "desc") String sortDirection,
@@ -88,8 +87,7 @@ public class HomeController {
         return "blogs";
     }
 
-    static Set<String> uniqueAuthors = new HashSet<>();
-    static Set<String> uniqueTags = new HashSet<>();
+
     @GetMapping("/search/page/{pageNo}")
     public String searchBlogs(@PathVariable Integer pageNo,
                               @RequestParam("search") String searchRequest,

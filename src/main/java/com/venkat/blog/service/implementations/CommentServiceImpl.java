@@ -14,11 +14,6 @@ public class CommentServiceImpl implements CommentService {
     public CommentServiceImpl(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
-    @Override
-    public List<Comment> findAll() {
-        List<Comment> comments = commentRepository.findAll();
-        return comments;
-    }
 
     @Override
     public Comment findById(Integer id) {
