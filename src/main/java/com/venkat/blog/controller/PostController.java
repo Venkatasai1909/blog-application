@@ -126,7 +126,6 @@ public class PostController {
         return "redirect:/";
     }
 
-
     @GetMapping("/post/{id}")
     public String getPost(@PathVariable Long id, Model model) {
         Integer postId = id.intValue();

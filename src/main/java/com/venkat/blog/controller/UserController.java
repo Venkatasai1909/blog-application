@@ -48,4 +48,26 @@ public class UserController {
     public String accessDenied() {
         return "access-denied";
     }
+
+    @GetMapping("/forgot-password")
+    public String forgotPassword(Model model) {
+        User user = new User();
+        model.addAttribute("user", user);
+
+        return "forgot-password";
+    }
+
+    @PostMapping("/forgot")
+    public String checkPassword(String username, String password, Model model) {
+        User user = userService.findByName(username);
+
+        if(user == null) {
+            model.addAttribute("error", "User not found..");
+            return "forgot-password";
+        }
+
+        user.setPassword(password);
+        userService.registerUser(user);
+        return "redirect:/login";
+    }
 }
