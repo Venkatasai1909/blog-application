@@ -80,7 +80,7 @@ public class PostController {
             modelPost.setExcerpt(modelPost.getContent());
         }
 
-        String[] tagArray = requestTags.split(",");
+        String[] tagArray = requestTags.trim().split(",");
         Set<Tag> tagSet = new HashSet<>();
 
         for (String tagName : tagArray) {
