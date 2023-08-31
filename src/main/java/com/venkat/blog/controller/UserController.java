@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class UserController {
     UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @RequestMapping("/register")
-    public String register(Model model){
+    public String register(Model model) {
         User user = new User();
         model.addAttribute("user", user);
 
@@ -22,18 +24,19 @@ public class UserController {
 
     @PostMapping("/register-user")
     public String registerUser(@ModelAttribute("user") User user,
-                               @RequestParam("confirm_password") String password,Model model) {
-        if(userService.findByName(user.getName()) != null  || userService.findByEmail(user.getEmail()) != null) {
+                               @RequestParam("confirm_password") String password, Model model) {
+        if (userService.findByName(user.getName()) != null || userService.findByEmail(user.getEmail()) != null) {
             model.addAttribute("error", "User already exists...");
 
             return "register";
         }
 
-        if(!user.getPassword().equals(password)) {
+        if (!user.getPassword().equals(password)) {
             model.addAttribute("error", "Password Mismatch...");
 
             return "register";
         }
+
         userService.registerUser(user);
 
         return "redirect:/";
@@ -61,7 +64,7 @@ public class UserController {
     public String checkPassword(String username, String password, Model model) {
         User user = userService.findByName(username);
 
-        if(user == null) {
+        if (user == null) {
             model.addAttribute("error", "User not found..");
             return "forgot-password";
         }

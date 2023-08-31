@@ -9,32 +9,34 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Controller
 public class HomeController {
+    static Set<String> homeAuthors = new HashSet<>();
+    static Set<String> homeTags = new HashSet<>();
+    static Set<String> searchAuthors = new HashSet<>();
+    static Set<String> searchTags = new HashSet<>();
     PostService postService;
     @Autowired
     public HomeController(PostService postService) {
         this.postService = postService;
     }
 
-
     @GetMapping("/")
     public String home(Model model) {
 
         return getListOfBlogs(1, "publishedAt", "desc", null,
-                              null, null,null, null, model);
+                null, null, null, null, model);
     }
 
-     static Set<String> authors = new HashSet<>();
-     static Set<String> tags = new HashSet<>();
-    static Set<String> uniqueAuthors = new HashSet<>();
-    static Set<String> uniqueTags = new HashSet<>();
     @GetMapping("/page/{pageNo}")
     public String getListOfBlogs(@PathVariable Integer pageNo, @RequestParam(defaultValue = "publishedAt") String sortField,
                                  @RequestParam(defaultValue = "desc") String sortDirection,
@@ -47,7 +49,7 @@ public class HomeController {
 
         int pageSize = 10;
         Sort sort = sortDirection.equals("desc") ?
-                                          Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
+                Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         Page<Post> posts = null;
@@ -57,19 +59,19 @@ public class HomeController {
             return "redirect:/search/page/" + pageNo + "?search=" + search;
         }
 
-        if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
+        if ((selectedAuthors != null && !selectedAuthors.isEmpty()) || (selectedTags != null && !selectedTags.isEmpty())
                 || startDate != null || endDate != null) {
             posts = postService.filterPosts(selectedAuthors, selectedTags, startDate, endDate, pageable);
         } else {
             posts = postService.findAll(pageable);
         }
 
-        if(pageNo == 1){
-            authors.clear();
-            tags.clear();
+        if (pageNo == 1) {
+            homeAuthors.clear();
+            homeTags.clear();
 
-            authors.addAll(postService.findAllAuthors());
-            tags.addAll(postService.findTagNamesWithPublishedPosts());
+            homeAuthors.addAll(postService.findAllAuthors());
+            homeTags.addAll(postService.findTagNamesWithPublishedPosts());
         }
 
         model.addAttribute("posts", posts.getContent());
@@ -81,8 +83,8 @@ public class HomeController {
         model.addAttribute("selectedTags", selectedTags);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
-        model.addAttribute("authors", authors);
-        model.addAttribute("tags", tags);
+        model.addAttribute("authors", homeAuthors);
+        model.addAttribute("tags", homeTags);
 
         return "blogs";
     }
@@ -101,27 +103,27 @@ public class HomeController {
         int pageSize = 10;
 
         Sort sort = sortDirection.equals("desc") ?
-                    Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
+                Sort.by(Sort.Order.desc(sortField)) : Sort.by(Sort.Order.asc(sortField));
 
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
         Page<Post> posts = null;
         searchRequest = searchRequest.trim();
 
-        if((selectedAuthors!=null && !selectedAuthors.isEmpty()) || (selectedTags!=null && !selectedTags.isEmpty())
+        if ((selectedAuthors != null && !selectedAuthors.isEmpty()) || (selectedTags != null && !selectedTags.isEmpty())
                 || startDate != null || endDate != null) {
             posts = posts = postService.filterAndSearchPosts(searchRequest, selectedAuthors, selectedTags,
-                                                              startDate, endDate, pageable);
+                    startDate, endDate, pageable);
         } else {
             posts = postService.findAllPostsBySearchRequest(searchRequest, pageable);
         }
 
-        if(pageNo == 1) {
-            uniqueTags.clear();
-            uniqueAuthors.clear();
+        if (pageNo == 1) {
+            searchTags.clear();
+            searchAuthors.clear();
 
-            uniqueTags.addAll(postService.findDistinctTagsBySearchRequest(searchRequest));
-            uniqueAuthors.addAll(postService.findDistinctAuthorsBySearchRequest(searchRequest));
+            searchTags.addAll(postService.findDistinctTagsBySearchRequest(searchRequest));
+            searchAuthors.addAll(postService.findDistinctAuthorsBySearchRequest(searchRequest));
         }
 
         model.addAttribute("posts", posts.getContent());
@@ -129,9 +131,9 @@ public class HomeController {
         model.addAttribute("search", searchRequest);
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDirection", sortDirection);
-        model.addAttribute("authors", uniqueAuthors);
+        model.addAttribute("authors", searchAuthors);
         model.addAttribute("currentPage", pageNo);
-        model.addAttribute("tags", uniqueTags);
+        model.addAttribute("tags", searchTags);
         model.addAttribute("selectedAuthors", selectedAuthors);
         model.addAttribute("selectedTags", selectedTags);
         model.addAttribute("startDate", startDate);

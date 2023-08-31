@@ -1,7 +1,6 @@
 package com.venkat.blog.repository;
 
 import com.venkat.blog.model.Post;
-import com.venkat.blog.model.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

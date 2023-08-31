@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class SecurityConfig  {
+public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserInfoUserDetailsService();
@@ -40,8 +40,10 @@ public class SecurityConfig  {
                 .authorizeRequests(configurer ->
                         configurer
                                 .requestMatchers("/new-post", "/drafts").authenticated()
-                                .requestMatchers(HttpMethod.POST, "/update-comment", "/delete-comment").hasRole("AUTHOR")
-                                .requestMatchers(HttpMethod.POST, "/save-post", "/update-post", "/delete-post", "/publish").hasAnyRole("AUTHOR", "ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/update-comment",
+                                        "/delete-comment").hasRole("AUTHOR")
+                                .requestMatchers(HttpMethod.POST, "/save-post", "/update-post",
+                                        "/delete-post", "/publish").hasAnyRole("AUTHOR", "ADMIN")
                                 .anyRequest().permitAll()
                 )
                 .formLogin(form ->

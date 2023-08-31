@@ -28,6 +28,7 @@ public class PostController {
     CommentService commentService;
     TagService tagService;
     UserService userService;
+
     @Autowired
     public PostController(PostService postService, CommentService commentService, TagService tagService,
                           UserService userService) {
@@ -59,27 +60,28 @@ public class PostController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
-        if(isAdmin) {
+        if (isAdmin) {
             modelPost.setAdminName(authentication.getName());
-            if(userService.findByName(modelPost.getAuthor()) == null) {
+            if (userService.findByName(modelPost.getAuthor()) == null) {
                 model.addAttribute("error", "User doesn't exists...");
 
                 return "post-form";
             }
         }
 
-        if(modelPost.getCreatedAt() == null) {
+        if (modelPost.getCreatedAt() == null) {
             modelPost.setCreatedAt(LocalDateTime.now());
+        }
+
+        if (modelPost.getContent().contains(".")) {
+            int fullStopIndex = modelPost.getContent().indexOf('.');
+            modelPost.setExcerpt(modelPost.getContent().substring(0, fullStopIndex + 1));
+        } else {
+            modelPost.setExcerpt(modelPost.getContent());
         }
 
         String[] tagArray = requestTags.split(",");
         Set<Tag> tagSet = new HashSet<>();
-        if(modelPost.getContent().contains(".")) {
-            int fullStopIndex = modelPost.getContent().indexOf('.');
-            modelPost.setExcerpt(modelPost.getContent().substring(0, fullStopIndex+1));
-        } else {
-            modelPost.setExcerpt(modelPost.getContent());
-        }
 
         for (String tagName : tagArray) {
             tagName = tagName.trim();
@@ -96,30 +98,29 @@ public class PostController {
             }
         }
 
-        if(action.equals("Draft")) {
+        if (action.equals("Draft")) {
             modelPost.setPublished(false);
         }
 
-        if(action.equals("Publish")) {
+        if (action.equals("Publish")) {
             modelPost.setPublished(true);
             modelPost.setPublishedAt(LocalDateTime.now());
         }
 
-        if(action.equals("Update")) {
+        if (action.equals("Update")) {
             modelPost.setUpdatedAt(LocalDateTime.now());
             modelPost.setPublished(true);
         }
 
-
         modelPost.setTags(tagSet);
         postService.save(modelPost);
 
-        if(action.equals("Update Draft")) {
+        if (action.equals("Update Draft")) {
             modelPost.setUpdatedAt(LocalDateTime.now());
             modelPost.setPublished(false);
         }
 
-        if(action.equals("Update Draft") || action.equals("Draft")) {
+        if (action.equals("Update Draft") || action.equals("Draft")) {
             return "redirect:/drafts";
         }
 
@@ -131,7 +132,7 @@ public class PostController {
         Integer postId = id.intValue();
         List<Comment> comments = commentService.findAllBYPostId(postId);
         Post post = postService.findById(postId);
-        if(post.getAdminName() != null) {
+        if (post.getAdminName() != null) {
             model.addAttribute("adminCreated", "Admin created post...");
         }
 
@@ -139,12 +140,12 @@ public class PostController {
         comment.setCreatedAt(LocalDateTime.now());
         model.addAttribute("comment", comment);
 
-        model.addAttribute("post",post);
-        model.addAttribute("comments",comments);
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
 
         return "post-page";
-
     }
+
     @PostMapping("/update-post")
     public String updatePost(@RequestParam("postId") Integer postId, Model model) {
         Post post = postService.findById(postId);
@@ -174,7 +175,7 @@ public class PostController {
         boolean isPublished = postService.findById(postId).isPublished();
         postService.deleteById(postId);
 
-        if(isPublished == false) {
+        if (!isPublished) {
             return "redirect:/drafts";
         }
 
@@ -182,7 +183,7 @@ public class PostController {
     }
 
     @GetMapping("/drafts")
-    public String  drafts(Model model) {
+    public String drafts(Model model) {
         List<Post> posts = new ArrayList<>();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -190,9 +191,9 @@ public class PostController {
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         boolean isAuthor = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_AUTHOR"));
 
-        if(isAdmin) {
+        if (isAdmin) {
             posts = postService.findAllByIsPublishedFalseAndAdminNameOrderByPublishedAtDesc(username);
-        } else if(isAuthor){
+        } else if (isAuthor) {
             posts = postService.findAllByIsPublishedFalseAndAuthorOrderByPublishedAtDesc(username);
         }
 
@@ -218,9 +219,9 @@ public class PostController {
         String username = authentication.getName();
         boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         boolean isAuthor = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_AUTHOR"));
-        List<Post> posts = new ArrayList<>();
 
-        if(isAdmin) {
+        List<Post> posts = new ArrayList<>();
+        if (isAdmin) {
             posts = postService.findAllByIsPublishedTrueAndAdminNameOrderByPublishedAtDesc(username);
         } else {
             posts = postService.findAllByIsPublishedTrueAndAuthorAndAdminNameIsNullOrderByPublishedAtDesc(username);

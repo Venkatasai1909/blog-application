@@ -5,18 +5,19 @@ import com.venkat.blog.repository.PostRepository;
 import com.venkat.blog.repository.TagRepository;
 import com.venkat.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class PostServiceImpl implements PostService {
     PostRepository postRepository;
     TagRepository tagRepository;
+
     @Autowired
     public PostServiceImpl(PostRepository postRepository, TagRepository tagRepository) {
         this.postRepository = postRepository;
@@ -89,7 +90,7 @@ public class PostServiceImpl implements PostService {
         int dates = (startDate == null || endDate == null) ? 1 : 0;
 
         return postRepository.filterAndSearchPosts(searchRequest, authorList, tagList, dates,
-                authorNames, tagNames, startDate, endDate,pageable);
+                authorNames, tagNames, startDate, endDate, pageable);
 
     }
 
