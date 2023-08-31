@@ -62,7 +62,7 @@ public class UserController {
 
     @PostMapping("/forgot")
     public String checkPassword(String username, String password, Model model) {
-        User user = userService.findByName(username);
+        User user = userService.findByEmail(username);
 
         if (user == null) {
             model.addAttribute("error", "User not found..");
